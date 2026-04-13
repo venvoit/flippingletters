@@ -5,45 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manual Flip-dle</title>
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --board-bg: #1e293b;
+            --text-color: #f8fafc;
+            --border-color: #334155;
+            --active-border: #94a3b8;
+            --tile-bg: #334155;
+            --tile-hover: #475569;
+            --accent-color: #fbbf24; /* Amber for flipped state */
+            --correct: #16a34a;
+            --present: #ca8a04;
+            --absent: #1e293b;
+            --btn-bg: #475569;
+            --btn-hover: #64748b;
+        }
+
         body {
             font-family: 'Century Gothic', 'Helvetica Neue', Helvetica, Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background-color: #121213;
-            color: white;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: 30px 20px;
             user-select: none;
         }
-        h1 { margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px;}
-        p { color: #818384; margin-top: 0; text-align: center; max-width: 500px; margin-bottom: 20px;}
+
+        h1 { margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 3px; font-size: 2rem;}
+        p { color: #94a3b8; margin-top: 0; text-align: center; max-width: 500px; margin-bottom: 30px; font-size: 1rem; line-height: 1.5;}
         
         /* Game Board */
         #board {
             display: grid;
             grid-template-rows: repeat(6, 1fr);
-            grid-gap: 5px;
+            grid-gap: 6px;
             margin-bottom: 30px;
+            padding: 10px;
+            background-color: var(--board-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
         .row {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            grid-gap: 5px;
+            grid-gap: 6px;
         }
         .board-tile {
             width: 60px;
             height: 60px;
-            border: 2px solid #3a3a3c;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: bold;
             text-transform: lowercase;
-            transition: transform 0.3s ease;
+            background-color: var(--bg-color);
+            box-sizing: border-box;
         }
-        .board-tile.active { border-color: #818384; }
+        .board-tile.active { border-color: var(--active-border); }
 
         /* Letter Bank */
         #bank {
@@ -51,89 +74,100 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 10px;
-            max-width: 400px;
-            margin-bottom: 20px;
+            max-width: 450px;
+            margin-bottom: 30px;
         }
-        .bank-tile-container {
+        
+        .bank-tile {
             position: relative;
             width: 60px;
-            height: 80px; /* Extra height for the flip button */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .bank-tile {
-            width: 60px;
             height: 60px;
-            background-color: #818384;
-            border-radius: 4px;
+            background-color: var(--tile-bg);
+            border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: bold;
             cursor: pointer;
             text-transform: lowercase;
-            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: background-color 0.2s;
         }
         .bank-tile:hover {
-            background-color: #9ca0a1;
-        }
-        
-        /* The physical rotation class */
-        .flipped {
-            transform: rotate(180deg);
+            background-color: var(--tile-hover);
         }
 
-        /* Flip Toggle Button */
+        /* The physical rotation class applied to the text span */
+        .char-span {
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .flipped .char-span {
+            transform: rotate(180deg);
+            color: var(--accent-color);
+        }
+
+        /* Integrated Flip Toggle Button */
         .flip-btn {
-            margin-top: 5px;
+            position: absolute;
+            top: 2px;
+            right: 4px;
             background: none;
             border: none;
-            color: #ff9800;
-            font-size: 1.5rem;
+            color: var(--active-border);
+            font-size: 1rem;
             cursor: pointer;
-            padding: 0;
+            padding: 4px;
             line-height: 1;
+            border-radius: 50%;
+            transition: color 0.2s, transform 0.2s;
         }
-        .flip-btn:hover { color: #ffb74d; }
+        .flip-btn:hover { 
+            color: var(--accent-color); 
+            transform: scale(1.2);
+        }
 
         /* Controls */
         .controls {
             display: flex;
-            gap: 10px;
+            gap: 12px;
         }
         button.action-btn {
-            padding: 15px 20px;
-            font-size: 1.2rem;
+            padding: 14px 24px;
+            font-size: 1.1rem;
             font-weight: bold;
-            background-color: #538d4e;
+            background-color: var(--correct);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: opacity 0.2s, transform 0.1s;
         }
+        button.action-btn:active { transform: translateY(2px); }
         button.action-btn.backspace {
-            background-color: #3a3a3c;
+            background-color: var(--btn-bg);
         }
-        button.action-btn:hover { opacity: 0.8; }
+        button.action-btn.backspace:hover { background-color: var(--btn-hover); }
+        button.action-btn:hover { opacity: 0.9; }
 
-        /* Wordle Colors */
-        .correct { background-color: #538d4e; border-color: #538d4e; }
-        .present { background-color: #b59f3b; border-color: #b59f3b; }
-        .absent { background-color: #3a3a3c; border-color: #3a3a3c; }
+        /* Wordle Colors for graded board */
+        .board-tile.correct { background-color: var(--correct); border-color: var(--correct); color: white;}
+        .board-tile.present { background-color: var(--present); border-color: var(--present); color: white;}
+        .board-tile.absent { background-color: var(--absent); border-color: var(--border-color); color: var(--active-border);}
 
-        #message { margin-top: 20px; font-weight: bold; font-size: 1.2rem; height: 1.5rem; }
+        #message { margin-top: 20px; font-weight: bold; font-size: 1.2rem; height: 1.5rem; color: var(--accent-color);}
     </style>
 </head>
 <body>
 
-    <h1>Manual Flip-dle</h1>
-    <p>Target word: <strong>plumb</strong>. Use the letter bank below. Click the orange arrow to flip letters 180° before adding them to your guess!</p>
+    <h1>Flip-dle</h1>
+    <p>Target word: <strong>plumb</strong><br>Use the letter bank below. Click the corner icon to flip letters 180° before building your word!</p>
 
     <div id="board"></div>
-
     <div id="bank"></div>
 
     <div class="controls">
@@ -147,8 +181,6 @@
         const TARGET_WORD = "plumb";
         const MAX_GUESSES = 6;
         let currentAttempt = 0;
-        
-        // currentGuess stores objects: { letter: 'p', isFlipped: true/false }
         let currentGuess = []; 
         let gameOver = false;
 
@@ -172,41 +204,46 @@
             for (let j = 0; j < 5; j++) {
                 const tile = document.createElement('div');
                 tile.className = 'board-tile';
+                
+                // Use a span for the text so we can rotate just the letter, not the whole box
+                const charSpan = document.createElement('span');
+                charSpan.className = 'char-span';
+                tile.appendChild(charSpan);
+                
                 row.appendChild(tile);
             }
             board.appendChild(row);
         }
 
-        // 2. Initialize Letter Bank UI
+        // 2. Initialize Uniform Letter Bank UI
         const bankContainer = document.getElementById('bank');
         bankData.forEach((item, index) => {
-            const container = document.createElement('div');
-            container.className = 'bank-tile-container';
-
-            // The main letter tile
             const tile = document.createElement('div');
             tile.className = 'bank-tile';
-            tile.innerText = item.char;
             tile.onclick = () => addLetterToGuess(index);
 
-            container.appendChild(tile);
+            // The letter text
+            const charSpan = document.createElement('span');
+            charSpan.className = 'char-span';
+            charSpan.innerText = item.char;
+            tile.appendChild(charSpan);
 
-            // Add a rotate button if it has a flipChar
+            // Add the integrated rotate button ONLY if it has a flipChar
             if (item.flipChar) {
                 const flipBtn = document.createElement('button');
                 flipBtn.className = 'flip-btn';
                 flipBtn.innerHTML = '↻';
+                flipBtn.title = "Flip 180°";
                 flipBtn.onclick = (e) => {
                     e.stopPropagation(); // Prevents adding the letter when flipping
                     toggleFlip(index, tile);
                 };
-                container.appendChild(flipBtn);
+                tile.appendChild(flipBtn);
             }
 
-            bankContainer.appendChild(container);
+            bankContainer.appendChild(tile);
         });
 
-        // Helper: Show messages
         function showMessage(msg) {
             const msgDiv = document.getElementById('message');
             msgDiv.innerText = msg;
@@ -215,13 +252,11 @@
             }
         }
 
-        // Logic: Flip a bank letter
         function toggleFlip(index, tileElement) {
             if (gameOver) return;
             const item = bankData[index];
             item.isFlipped = !item.isFlipped;
             
-            // Physically rotate the DOM element
             if (item.isFlipped) {
                 tileElement.classList.add('flipped');
             } else {
@@ -229,16 +264,14 @@
             }
         }
 
-        // Logic: Add letter to current row
         function addLetterToGuess(index) {
             if (gameOver || currentGuess.length >= 5) return;
             
             const item = bankData[index];
-            // Determine logical value based on flip state
             const currentLogicalChar = item.isFlipped ? item.flipChar : item.char;
 
             currentGuess.push({
-                char: item.char, // We store the original char for visual rotation on the board
+                char: item.char, 
                 logicalChar: currentLogicalChar,
                 isFlipped: item.isFlipped
             });
@@ -246,36 +279,33 @@
             updateBoardUI();
         }
 
-        // Logic: Remove last letter
         function backspace() {
             if (gameOver || currentGuess.length === 0) return;
             currentGuess.pop();
             updateBoardUI();
         }
 
-        // UI: Render the current row
         function updateBoardUI() {
             const rowNodes = document.querySelectorAll('.row')[currentAttempt].children;
             
             for (let i = 0; i < 5; i++) {
-                // Reset classes
                 rowNodes[i].className = 'board-tile';
+                const charSpan = rowNodes[i].querySelector('.char-span');
                 
                 if (i < currentGuess.length) {
                     const guessItem = currentGuess[i];
-                    rowNodes[i].innerText = guessItem.char;
+                    charSpan.innerText = guessItem.char;
                     rowNodes[i].classList.add('active');
                     
                     if (guessItem.isFlipped) {
                         rowNodes[i].classList.add('flipped');
                     }
                 } else {
-                    rowNodes[i].innerText = "";
+                    charSpan.innerText = "";
                 }
             }
         }
 
-        // Logic: Submit and Grade
         function submitGuess() {
             if (gameOver) return;
             if (currentGuess.length !== 5) {
@@ -285,12 +315,11 @@
 
             const rowNodes = document.querySelectorAll('.row')[currentAttempt].children;
             let targetArray = TARGET_WORD.split('');
-            let guessArray = currentGuess.map(g => g.logicalChar); // We grade the logical letters
+            let guessArray = currentGuess.map(g => g.logicalChar); 
             let colors = new Array(5).fill('absent');
-
             let finalWordString = guessArray.join('');
 
-            // Pass 1: Exact Matches (Greens)
+            // Pass 1: Exact Matches
             for (let i = 0; i < 5; i++) {
                 if (guessArray[i] === targetArray[i]) {
                     colors[i] = 'correct';
@@ -298,7 +327,7 @@
                 }
             }
 
-            // Pass 2: Partial Matches (Yellows)
+            // Pass 2: Partial Matches
             for (let i = 0; i < 5; i++) {
                 if (colors[i] === 'correct') continue;
                 let targetIndex = targetArray.indexOf(guessArray[i]);
@@ -308,29 +337,26 @@
                 }
             }
 
-            // Apply colors
+            // Apply colors visually
             for (let i = 0; i < 5; i++) {
                 rowNodes[i].classList.remove('active');
                 rowNodes[i].classList.add(colors[i]);
-                // Ensure text color is white so it reads well on colored backgrounds
-                rowNodes[i].style.color = "white"; 
             }
 
-            // Check Win/Loss
             currentAttempt++;
             
             if (finalWordString === TARGET_WORD) {
-                showMessage("You win! You built the word.");
+                showMessage("Fantastic! You built the word.");
                 gameOver = true;
             } else if (currentAttempt >= MAX_GUESSES) {
                 showMessage("Game Over. The word was " + TARGET_WORD);
                 gameOver = true;
             } else {
-                currentGuess = []; // Reset for next line
+                currentGuess = []; 
             }
         }
 
-        // Add keyboard support for backspace and enter to make testing easier
+        // Keyboard Support
         document.addEventListener("keydown", (e) => {
             if (e.key === "Backspace") backspace();
             if (e.key === "Enter") submitGuess();
