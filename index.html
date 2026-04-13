@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flip-dle Prototype</title>
     <style>
+        /* Using geometric fonts like Century Gothic or Helvetica makes the b/q d/p flips look perfect */
         body {
-            font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Century Gothic', 'Helvetica Neue', Helvetica, Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -15,7 +16,7 @@
             margin: 0;
             padding: 20px;
         }
-        h1 { margin-bottom: 5px; }
+        h1 { margin-bottom: 5px; text-transform: uppercase; }
         p { color: #818384; margin-top: 0; text-align: center; max-width: 400px; margin-bottom: 20px;}
         
         #board {
@@ -36,9 +37,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
-            text-transform: uppercase;
+            /* CRITICAL FIX: Forces all letters to lowercase for the visual illusion to work */
+            text-transform: lowercase; 
         }
         
         /* Active typing border */
@@ -60,26 +62,26 @@
 </head>
 <body>
 
-    <h1>FLIP-DLE</h1>
-    <p>Target word: SWORD. M, W, B, Q, D, P, N, and U have a 50% chance to flip 180° before being graded!</p>
+    <h1>Flip-dle</h1>
+    <p>Target word: sword. m, w, b, q, d, p, n, and u have a 50% chance to flip 180° before being graded!</p>
 
     <div id="board"></div>
     <div id="message"></div>
 
     <script>
-        // Prototype Settings
-        const TARGET_WORD = "SWORD"; 
+        // Prototype Settings - Now completely lowercase
+        const TARGET_WORD = "sword"; 
         const MAX_GUESSES = 6;
         let currentGuessCount = 0;
         let currentGuess = "";
         let gameOver = false;
 
-        // The Flip Dictionary
+        // The Flip Dictionary - Updated to lowercase
         const FLIP_MAP = {
-            'M': 'W', 'W': 'M',
-            'B': 'Q', 'Q': 'B',
-            'D': 'P', 'P': 'D',
-            'N': 'U', 'U': 'N'
+            'm': 'w', 'w': 'm',
+            'b': 'q', 'q': 'b',
+            'd': 'p', 'p': 'd',
+            'n': 'u', 'u': 'n'
         };
 
         // Initialize Board
@@ -98,7 +100,6 @@
         function showMessage(msg) {
             const msgDiv = document.getElementById('message');
             msgDiv.innerText = msg;
-            // Clear message after 2 seconds unless game is over
             if (!gameOver && msg !== "") {
                 setTimeout(() => { msgDiv.innerText = ""; }, 2000);
             }
@@ -127,7 +128,7 @@
             let flipStatus = []; 
             let rowNodes = document.querySelectorAll('.row')[currentGuessCount].children;
 
-            // 1. Transform the guess (The Flip-dle Mechanic)
+            // 1. Transform the guess
             for (let i = 0; i < 5; i++) {
                 let char = currentGuess[i];
                 if (FLIP_MAP[char] && Math.random() > 0.5) {
@@ -191,14 +192,15 @@
         document.addEventListener("keydown", (e) => {
             if (gameOver) return;
 
-            let key = e.key.toUpperCase();
+            // CRITICAL FIX: Capture keys as lowercase
+            let key = e.key.toLowerCase();
 
-            if (key === "ENTER") {
+            if (key === "enter") {
                 submitGuess();
-            } else if (key === "BACKSPACE") {
+            } else if (key === "backspace") {
                 currentGuess = currentGuess.slice(0, -1);
                 updateBoard();
-            } else if (/^[A-Z]$/.test(key)) {
+            } else if (/^[a-z]$/.test(key)) {
                 if (currentGuess.length < 5) {
                     currentGuess += key;
                     updateBoard();
