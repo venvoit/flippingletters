@@ -16,7 +16,7 @@
             padding: 20px;
         }
         h1 { margin-bottom: 5px; }
-        p { color: #818384; margin-top: 0; text-align: center; max-width: 400px; }
+        p { color: #818384; margin-top: 0; text-align: center; max-width: 400px; margin-bottom: 20px;}
         
         #board {
             display: grid;
@@ -41,10 +41,13 @@
             text-transform: uppercase;
         }
         
+        /* Active typing border */
+        .tile.active { border-color: #818384; }
+
         /* The Magic Flip Class */
         .flipped {
             transform: rotate(180deg);
-            color: #ff9800; /* Coloring flipped letters slightly different so you notice */
+            color: #ff9800; /* Colors flipped letters slightly orange */
         }
 
         /* Wordle Colors */
@@ -52,51 +55,23 @@
         .present { background-color: #b59f3b; border-color: #b59f3b; }
         .absent { background-color: #3a3a3c; border-color: #3a3a3c; }
 
-        .controls {
-            display: flex;
-            gap: 10px;
-        }
-        input {
-            padding: 10px;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            width: 200px;
-            text-align: center;
-            border: none;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 1.2rem;
-            background-color: #538d4e;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover { background-color: #43733e; }
-        #message { margin-top: 20px; font-weight: bold; font-size: 1.2rem; height: 1.5rem; }
+        #message { font-weight: bold; font-size: 1.2rem; height: 1.5rem; }
     </style>
 </head>
 <body>
 
     <h1>FLIP-DLE</h1>
-    <p>Target word is 5 letters. M, W, B, Q, D, P, N, and U have a 50% chance to flip 180° before being graded!</p>
+    <p>Target word: SWORD. M, W, B, Q, D, P, N, and U have a 50% chance to flip 180° before being graded!</p>
 
     <div id="board"></div>
-
-    <div class="controls">
-        <input type="text" id="guessInput" maxlength="5" placeholder="TYPE GUESS">
-        <button onclick="submitGuess()">GUESS</button>
-    </div>
-    
     <div id="message"></div>
 
     <script>
         // Prototype Settings
-        const TARGET_WORD = "SWORD"; // Hardcoded for prototype
+        const TARGET_WORD = "SWORD"; 
         const MAX_GUESSES = 6;
         let currentGuessCount = 0;
+        let currentGuess = "";
         let gameOver = false;
 
         // The Flip Dictionary
@@ -121,34 +96,40 @@
         }
 
         function showMessage(msg) {
-            document.getElementById('message').innerText = msg;
+            const msgDiv = document.getElementById('message');
+            msgDiv.innerText = msg;
+            // Clear message after 2 seconds unless game is over
+            if (!gameOver && msg !== "") {
+                setTimeout(() => { msgDiv.innerText = ""; }, 2000);
+            }
+        }
+
+        function updateBoard() {
+            if (gameOver) return;
+            let rowNodes = document.querySelectorAll('.row')[currentGuessCount].children;
+            for (let i = 0; i < 5; i++) {
+                rowNodes[i].innerText = currentGuess[i] || "";
+                if (currentGuess[i]) {
+                    rowNodes[i].classList.add('active');
+                } else {
+                    rowNodes[i].classList.remove('active');
+                }
+            }
         }
 
         function submitGuess() {
-            if (gameOver) return;
-
-            const inputField = document.getElementById('guessInput');
-            let guess = inputField.value.toUpperCase();
-
-            // Validate length
-            if (guess.length !== 5) {
-                showMessage("Guess must be 5 letters!");
-                return;
-            }
-            if (!/^[A-Z]{5}$/.test(guess)) {
-                showMessage("Letters only!");
+            if (currentGuess.length !== 5) {
+                showMessage("Not enough letters");
                 return;
             }
 
-            showMessage(""); // Clear errors
-            
-            // 1. Transform the guess (The Flip-dle Mechanic)
             let finalGuess = "";
-            let flipStatus = []; // Array of booleans to track what flipped
+            let flipStatus = []; 
+            let rowNodes = document.querySelectorAll('.row')[currentGuessCount].children;
 
+            // 1. Transform the guess (The Flip-dle Mechanic)
             for (let i = 0; i < 5; i++) {
-                let char = guess[i];
-                // 50% chance to flip if it's in the FLIP_MAP
+                let char = currentGuess[i];
                 if (FLIP_MAP[char] && Math.random() > 0.5) {
                     finalGuess += FLIP_MAP[char];
                     flipStatus.push(true);
@@ -159,39 +140,34 @@
             }
 
             // 2. Grade the transformed guess
-            let rowNodes = document.querySelectorAll('.row')[currentGuessCount].children;
             let targetArray = TARGET_WORD.split('');
             let guessArray = finalGuess.split('');
             let colors = new Array(5).fill('absent');
 
-            // Pass 1: Find Exact Matches (Greens)
+            // Pass 1: Exact Matches (Greens)
             for (let i = 0; i < 5; i++) {
                 if (guessArray[i] === targetArray[i]) {
                     colors[i] = 'correct';
-                    targetArray[i] = null; // Mark as used
+                    targetArray[i] = null; 
                 }
             }
 
-            // Pass 2: Find Partial Matches (Yellows)
+            // Pass 2: Partial Matches (Yellows)
             for (let i = 0; i < 5; i++) {
                 if (colors[i] === 'correct') continue;
-                
                 let targetIndex = targetArray.indexOf(guessArray[i]);
                 if (targetIndex !== -1) {
                     colors[i] = 'present';
-                    targetArray[targetIndex] = null; // Mark as used
+                    targetArray[targetIndex] = null; 
                 }
             }
 
-            // 3. Render the row
+            // 3. Render the row colors and flips
             for (let i = 0; i < 5; i++) {
-                // If it flipped, we show the ORIGINAL character physically turned upside down
-                // If it didn't flip, we just show the character normally
-                let displayChar = flipStatus[i] ? guess[i] : finalGuess[i];
-                
-                rowNodes[i].innerText = displayChar;
+                rowNodes[i].classList.remove('active');
                 rowNodes[i].classList.add(colors[i]);
                 
+                // If it flipped, show the visually flipped original letter
                 if (flipStatus[i]) {
                     rowNodes[i].classList.add('flipped');
                 }
@@ -199,22 +175,34 @@
 
             // 4. Check Win/Loss
             currentGuessCount++;
-            inputField.value = ""; // Clear input
-
+            
             if (finalGuess === TARGET_WORD) {
                 showMessage("You win! You decoded the flips.");
                 gameOver = true;
             } else if (currentGuessCount >= MAX_GUESSES) {
                 showMessage("Game Over. The word was " + TARGET_WORD);
                 gameOver = true;
+            } else {
+                currentGuess = ""; // Reset for next line
             }
         }
 
-        // Allow Enter key to submit
-        document.getElementById("guessInput").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
+        // Global Keyboard Listener
+        document.addEventListener("keydown", (e) => {
+            if (gameOver) return;
+
+            let key = e.key.toUpperCase();
+
+            if (key === "ENTER") {
                 submitGuess();
+            } else if (key === "BACKSPACE") {
+                currentGuess = currentGuess.slice(0, -1);
+                updateBoard();
+            } else if (/^[A-Z]$/.test(key)) {
+                if (currentGuess.length < 5) {
+                    currentGuess += key;
+                    updateBoard();
+                }
             }
         });
     </script>
