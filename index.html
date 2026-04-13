@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual Flip-dle</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet">
+    <title>Manual Flip-dle - Polished</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #0f172a;
             --board-bg: #1e293b;
+            --bank-bg: #0b1121;
             --text-color: #f8fafc;
+            --text-muted: #94a3b8;
             --border-color: #334155;
-            --active-border: #94a3b8;
+            --active-border: #cbd5e1;
             --tile-bg: #334155;
             --tile-hover: #475569;
             --accent-color: #fbbf24; 
@@ -23,7 +25,6 @@
         }
 
         body {
-            /* Applied the new rounded font */
             font-family: 'Nunito', sans-serif;
             display: flex;
             flex-direction: column;
@@ -31,61 +32,75 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 30px 20px;
+            padding: 40px 20px;
             user-select: none;
         }
 
-        h1 { margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 3px; font-size: 2rem;}
-        p { color: #94a3b8; margin-top: 0; text-align: center; max-width: 500px; margin-bottom: 30px; font-size: 1rem; line-height: 1.5;}
+        h1 { margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 4px; font-size: 2.2rem; font-weight: 800;}
+        #dayIndicator { font-size: 1.1rem; color: var(--accent-color); margin-bottom: 12px; font-weight: bold; letter-spacing: 1px;}
+        p { color: var(--text-muted); margin-top: 0; text-align: center; max-width: 480px; margin-bottom: 30px; font-size: 1.05rem; line-height: 1.5;}
         
         /* Game Board */
         #board {
             display: grid;
             grid-template-rows: repeat(6, 1fr);
-            grid-gap: 6px;
-            margin-bottom: 30px;
-            padding: 10px;
+            grid-gap: 8px;
+            margin-bottom: 35px;
+            padding: 12px;
             background-color: var(--board-bg);
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
         .row {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            grid-gap: 6px;
+            grid-gap: 8px;
         }
         .board-tile {
-            width: 60px;
-            height: 60px;
+            width: 62px;
+            height: 62px;
             border: 2px solid var(--border-color);
             border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             font-weight: bold;
             text-transform: lowercase;
             background-color: var(--bg-color);
             box-sizing: border-box;
-            /* Ensures the 'l' and other tall letters don't throw off alignment */
             line-height: 1; 
+            transition: transform 0.1s, border-color 0.2s;
         }
-        .board-tile.active { border-color: var(--active-border); }
+        .board-tile.active-row { border-color: #64748b; }
+        .board-tile.filled { border-color: var(--active-border); animation: pop 0.15s ease-out; }
 
-        /* Letter Bank */
-        #bank {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            max-width: 450px;
-            margin-bottom: 30px;
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
         }
-        
+
+        /* Structured Letter Bank */
+        #bank-container {
+            background-color: var(--bank-bg);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 35px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+        }
+        #bank {
+            display: grid;
+            grid-template-columns: repeat(4, 62px); 
+            grid-template-rows: repeat(2, 62px); 
+            gap: 12px;
+            justify-content: center;
+        }
         .bank-tile {
             position: relative;
-            width: 60px;
-            height: 60px;
+            width: 100%;
+            height: 100%;
             background-color: var(--tile-bg);
             border-radius: 8px;
             display: flex;
@@ -95,200 +110,282 @@
             font-weight: bold;
             cursor: pointer;
             text-transform: lowercase;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: background-color 0.2s, transform 0.1s;
             line-height: 1;
+            border: 1px solid #475569;
         }
-        .bank-tile:hover {
-            background-color: var(--tile-hover);
-        }
+        .bank-tile:hover { background-color: var(--tile-hover); transform: translateY(-2px); }
+        .bank-tile:active { transform: translateY(1px); }
 
         .char-span {
             display: inline-block;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .flipped .char-span {
             transform: rotate(180deg);
             color: var(--accent-color);
         }
 
-        /* Integrated Flip Toggle Button */
         .flip-btn {
             position: absolute;
-            top: 2px;
+            top: 4px;
             right: 4px;
-            background: none;
+            background: rgba(15, 23, 42, 0.6); 
             border: none;
             color: var(--active-border);
-            font-size: 1rem;
+            font-size: 0.9rem;
             cursor: pointer;
-            padding: 4px;
+            padding: 3px;
             line-height: 1;
             border-radius: 50%;
-            transition: color 0.2s, transform 0.2s;
+            transition: all 0.2s;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .flip-btn:hover { 
-            color: var(--accent-color); 
-            transform: scale(1.2);
-        }
+        .flip-btn:hover { color: var(--accent-color); background: rgba(15, 23, 42, 0.9); transform: scale(1.15) rotate(90deg); }
 
         /* Controls */
-        .controls {
-            display: flex;
-            gap: 12px;
-        }
+        .controls { display: flex; gap: 16px; }
         button.action-btn {
-            padding: 14px 24px;
+            padding: 16px 28px;
             font-size: 1.1rem;
-            font-weight: bold;
-            background-color: var(--correct);
+            font-weight: 800;
+            background: linear-gradient(180deg, #16a34a 0%, #15803d 100%);
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 1px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: opacity 0.2s, transform 0.1s;
             font-family: 'Nunito', sans-serif;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.1s;
         }
-        button.action-btn:active { transform: translateY(2px); }
-        button.action-btn.backspace {
-            background-color: var(--btn-bg);
-        }
-        button.action-btn.backspace:hover { background-color: var(--btn-hover); }
-        button.action-btn:hover { opacity: 0.9; }
+        button.action-btn:active { transform: translateY(3px); box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        button.action-btn.backspace { background: linear-gradient(180deg, #475569 0%, #334155 100%); }
+        button.action-btn.backspace:hover { background: linear-gradient(180deg, #64748b 0%, #475569 100%); }
+        button.action-btn:hover:not(.backspace) { background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%); }
 
-        /* Wordle Colors for graded board */
+        /* Graded Colors */
         .board-tile.correct { background-color: var(--correct); border-color: var(--correct); color: white;}
         .board-tile.present { background-color: var(--present); border-color: var(--present); color: white;}
-        .board-tile.absent { background-color: var(--absent); border-color: var(--border-color); color: var(--active-border);}
+        .board-tile.absent { background-color: var(--absent); border-color: var(--border-color); color: var(--text-muted);}
 
-        #message { margin-top: 20px; font-weight: bold; font-size: 1.2rem; height: 1.5rem; color: var(--accent-color);}
+        #message { margin-top: 24px; font-weight: bold; font-size: 1.3rem; height: 1.5rem; color: var(--accent-color); text-align: center; letter-spacing: 0.5px;}
 
-        /* Debug Button Styles */
+        /* Debug Menu */
         .debug-container {
-            margin-top: 40px;
+            margin-top: 50px;
+            padding: 15px;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
             text-align: center;
+            background-color: rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
         }
-        .debug-btn {
-            background: transparent;
+        .debug-container h3 { margin: 0; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
+        .debug-controls { display: flex; gap: 10px; align-items: center; }
+        .debug-btn, select {
+            background: var(--bg-color);
             border: 1px solid var(--border-color);
-            color: var(--border-color);
-            padding: 5px 10px;
-            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            font-size: 0.9rem;
             border-radius: 4px;
             cursor: pointer;
             font-family: 'Nunito', sans-serif;
+            outline: none;
         }
-        .debug-btn:hover {
-            color: var(--active-border);
-            border-color: var(--active-border);
-        }
-        #debugWord {
-            display: block;
-            margin-top: 5px;
-            font-size: 0.9rem;
-            color: var(--accent-color);
-            visibility: hidden;
-        }
+        .debug-btn:hover, select:hover { border-color: var(--active-border); color: var(--text-color);}
+        #debugWord { font-size: 1rem; color: var(--correct); visibility: hidden; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;}
     </style>
 </head>
 <body>
 
     <h1>Flip-dle</h1>
-    <p>Use the letter bank below. Click the corner icon to flip letters 180° before building your guess!</p>
+    <div id="dayIndicator">Day 1</div>
+    <p>Use the 8-letter bank below. Click the corner icon to physically flip letters 180° before building your guess!</p>
 
     <div id="board"></div>
-    <div id="bank"></div>
+    
+    <div id="bank-container">
+        <div id="bank"></div>
+    </div>
 
     <div class="controls">
         <button class="action-btn backspace" onclick="backspace()">Backspace</button>
-        <button class="action-btn" onclick="submitGuess()">Submit Guess</button>
+        <button class="action-btn" onclick="submitGuess()">Submit</button>
     </div>
 
     <div id="message"></div>
 
     <div class="debug-container">
-        <button class="debug-btn" onclick="toggleDebug()">Debug: Reveal Target Word</button>
+        <h3>Developer Options</h3>
+        <div class="debug-controls">
+            <select id="daySelect" onchange="loadSelectedDay()">
+                <option value="0">Day 1</option>
+                <option value="1">Day 2</option>
+                <option value="2">Day 3</option>
+                <option value="3">Day 4</option>
+                <option value="4">Day 5</option>
+                <option value="5">Day 6</option>
+                <option value="6">Day 7</option>
+            </select>
+            <button class="debug-btn" onclick="toggleDebug()">Reveal Target</button>
+        </div>
         <span id="debugWord"></span>
     </div>
 
     <script>
-        const TARGET_WORD = "plumb";
+        const gameLevels = [
+            {
+                word: "plumb",
+                bank: [
+                    // Mixed states: p and b are correct at base, n and w need flipping to become u and m
+                    { char: 'p', flipChar: 'd' }, { char: 'l', flipChar: null }, { char: 'n', flipChar: 'u' }, { char: 'w', flipChar: 'm' },
+                    { char: 'b', flipChar: 'q' }, { char: 'a', flipChar: null }, { char: 'e', flipChar: null }, { char: 'r', flipChar: null }
+                ]
+            },
+            {
+                word: "squad",
+                bank: [
+                    // s, u, d are correct. b needs flipping to q.
+                    { char: 's', flipChar: null }, { char: 'b', flipChar: 'q' }, { char: 'u', flipChar: 'n' }, { char: 'a', flipChar: null },
+                    { char: 'd', flipChar: 'p' }, { char: 'e', flipChar: null }, { char: 'r', flipChar: null }, { char: 't', flipChar: null }
+                ]
+            },
+            {
+                word: "crown",
+                bank: [
+                    // c, r, o, n are correct. m needs flipping to w.
+                    { char: 'c', flipChar: null }, { char: 'r', flipChar: null }, { char: 'o', flipChar: null }, { char: 'm', flipChar: 'w' },
+                    { char: 'n', flipChar: 'u' }, { char: 't', flipChar: null }, { char: 'l', flipChar: null }, { char: 'i', flipChar: null }
+                ]
+            },
+            {
+                word: "equip",
+                bank: [
+                    // e, i, q are correct. n and d need flipping to u and p.
+                    { char: 'e', flipChar: null }, { char: 'q', flipChar: 'b' }, { char: 'n', flipChar: 'u' }, { char: 'i', flipChar: null },
+                    { char: 'd', flipChar: 'p' }, { char: 's', flipChar: null }, { char: 'a', flipChar: null }, { char: 'r', flipChar: null }
+                ]
+            },
+            {
+                word: "maple",
+                bank: [
+                    // a, p, l, e are correct. w needs flipping to m.
+                    { char: 'w', flipChar: 'm' }, { char: 'a', flipChar: null }, { char: 'p', flipChar: 'd' }, { char: 'l', flipChar: null },
+                    { char: 'e', flipChar: null }, { char: 't', flipChar: null }, { char: 'o', flipChar: null }, { char: 's', flipChar: null }
+                ]
+            },
+            {
+                word: "blend",
+                bank: [
+                    // b, l, e are correct. u and p need flipping to n and d.
+                    { char: 'b', flipChar: 'q' }, { char: 'l', flipChar: null }, { char: 'e', flipChar: null }, { char: 'u', flipChar: 'n' },
+                    { char: 'p', flipChar: 'd' }, { char: 'c', flipChar: null }, { char: 'k', flipChar: null }, { char: 'y', flipChar: null }
+                ]
+            },
+            {
+                word: "proud",
+                bank: [
+                    // p, r, o, d are correct. n needs flipping to u. (m is a distractor that can flip to w)
+                    { char: 'p', flipChar: 'd' }, { char: 'r', flipChar: null }, { char: 'o', flipChar: null }, { char: 'n', flipChar: 'u' },
+                    { char: 'd', flipChar: 'p' }, { char: 'm', flipChar: 'w' }, { char: 's', flipChar: null }, { char: 't', flipChar: null }
+                ]
+            }
+        ];
+
         const MAX_GUESSES = 6;
+        let TARGET_WORD = "";
+        let currentBankData = [];
         let currentAttempt = 0;
         let currentGuess = []; 
         let gameOver = false;
 
-        // The Letter Bank Definition
-        const bankData = [
-            { id: 0, char: 'd', flipChar: 'p', isFlipped: false },
-            { id: 1, char: 'l', flipChar: null, isFlipped: false },
-            { id: 2, char: 'n', flipChar: 'u', isFlipped: false },
-            { id: 3, char: 'w', flipChar: 'm', isFlipped: false },
-            { id: 4, char: 'q', flipChar: 'b', isFlipped: false },
-            { id: 5, char: 'a', flipChar: null, isFlipped: false },
-            { id: 6, char: 'e', flipChar: null, isFlipped: false },
-            { id: 7, char: 'r', flipChar: null, isFlipped: false }
-        ];
-
-        // 1. Initialize Game Board UI
-        const board = document.getElementById('board');
-        for (let i = 0; i < MAX_GUESSES; i++) {
-            const row = document.createElement('div');
-            row.className = 'row';
-            for (let j = 0; j < 5; j++) {
-                const tile = document.createElement('div');
-                tile.className = 'board-tile';
-                
-                const charSpan = document.createElement('span');
-                charSpan.className = 'char-span';
-                tile.appendChild(charSpan);
-                
-                row.appendChild(tile);
+        function initGame(dayIndex) {
+            const level = gameLevels[dayIndex];
+            TARGET_WORD = level.word;
+            
+            // 1. Copy the bank data
+            currentBankData = level.bank.map(item => ({ ...item, isFlipped: false }));
+            
+            // 2. Randomize the bank array (Fisher-Yates Shuffle)
+            for (let i = currentBankData.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentBankData[i], currentBankData[j]] = [currentBankData[j], currentBankData[i]];
             }
-            board.appendChild(row);
+            
+            currentAttempt = 0;
+            currentGuess = [];
+            gameOver = false;
+            
+            document.getElementById('dayIndicator').innerText = `Day ${dayIndex + 1}`;
+            document.getElementById('message').innerText = "";
+            document.getElementById('debugWord').style.visibility = 'hidden';
+
+            buildBoard();
+            buildBank();
+            updateBoardUI();
         }
 
-        // 2. Initialize Uniform Letter Bank UI
-        const bankContainer = document.getElementById('bank');
-        bankData.forEach((item, index) => {
-            const tile = document.createElement('div');
-            tile.className = 'bank-tile';
-            tile.onclick = () => addLetterToGuess(index);
-
-            const charSpan = document.createElement('span');
-            charSpan.className = 'char-span';
-            charSpan.innerText = item.char;
-            tile.appendChild(charSpan);
-
-            if (item.flipChar) {
-                const flipBtn = document.createElement('button');
-                flipBtn.className = 'flip-btn';
-                flipBtn.innerHTML = '↻';
-                flipBtn.title = "Flip 180°";
-                flipBtn.onclick = (e) => {
-                    e.stopPropagation(); 
-                    toggleFlip(index, tile);
-                };
-                tile.appendChild(flipBtn);
+        function buildBoard() {
+            const board = document.getElementById('board');
+            board.innerHTML = ''; 
+            for (let i = 0; i < MAX_GUESSES; i++) {
+                const row = document.createElement('div');
+                row.className = 'row';
+                for (let j = 0; j < 5; j++) {
+                    const tile = document.createElement('div');
+                    tile.className = 'board-tile';
+                    const charSpan = document.createElement('span');
+                    charSpan.className = 'char-span';
+                    tile.appendChild(charSpan);
+                    row.appendChild(tile);
+                }
+                board.appendChild(row);
             }
+        }
 
-            bankContainer.appendChild(tile);
-        });
+        function buildBank() {
+            const bankContainer = document.getElementById('bank');
+            bankContainer.innerHTML = ''; 
+            
+            currentBankData.forEach((item, index) => {
+                const tile = document.createElement('div');
+                tile.className = 'bank-tile';
+                tile.onclick = () => addLetterToGuess(index);
 
-        function showMessage(msg) {
-            const msgDiv = document.getElementById('message');
-            msgDiv.innerText = msg;
-            if (!gameOver && msg !== "") {
-                setTimeout(() => { msgDiv.innerText = ""; }, 2500);
-            }
+                const charSpan = document.createElement('span');
+                charSpan.className = 'char-span';
+                charSpan.innerText = item.char;
+                tile.appendChild(charSpan);
+
+                if (item.flipChar) {
+                    const flipBtn = document.createElement('button');
+                    flipBtn.className = 'flip-btn';
+                    flipBtn.innerHTML = '↻';
+                    flipBtn.title = "Flip 180°";
+                    flipBtn.onclick = (e) => {
+                        e.stopPropagation(); 
+                        toggleFlip(index, tile);
+                    };
+                    tile.appendChild(flipBtn);
+                }
+                bankContainer.appendChild(tile);
+            });
         }
 
         function toggleFlip(index, tileElement) {
             if (gameOver) return;
-            const item = bankData[index];
+            const item = currentBankData[index];
             item.isFlipped = !item.isFlipped;
             
             if (item.isFlipped) {
@@ -300,8 +397,7 @@
 
         function addLetterToGuess(index) {
             if (gameOver || currentGuess.length >= 5) return;
-            
-            const item = bankData[index];
+            const item = currentBankData[index];
             const currentLogicalChar = item.isFlipped ? item.flipChar : item.char;
 
             currentGuess.push({
@@ -309,7 +405,6 @@
                 logicalChar: currentLogicalChar,
                 isFlipped: item.isFlipped
             });
-
             updateBoardUI();
         }
 
@@ -320,30 +415,51 @@
         }
 
         function updateBoardUI() {
-            const rowNodes = document.querySelectorAll('.row')[currentAttempt].children;
+            const rows = document.querySelectorAll('.row');
             
-            for (let i = 0; i < 5; i++) {
-                rowNodes[i].className = 'board-tile';
-                const charSpan = rowNodes[i].querySelector('.char-span');
+            for (let r = 0; r < MAX_GUESSES; r++) {
+                const rowNodes = rows[r].children;
                 
-                if (i < currentGuess.length) {
-                    const guessItem = currentGuess[i];
-                    charSpan.innerText = guessItem.char;
-                    rowNodes[i].classList.add('active');
+                for (let i = 0; i < 5; i++) {
+                    const charSpan = rowNodes[i].querySelector('.char-span');
                     
-                    if (guessItem.isFlipped) {
-                        rowNodes[i].classList.add('flipped');
+                    if (r >= currentAttempt) {
+                        rowNodes[i].className = 'board-tile';
+                        
+                        if (r === currentAttempt) {
+                            rowNodes[i].classList.add('active-row');
+                        }
+
+                        if (r === currentAttempt && i < currentGuess.length) {
+                            const guessItem = currentGuess[i];
+                            charSpan.innerText = guessItem.char;
+                            rowNodes[i].classList.add('filled');
+                            if (guessItem.isFlipped) rowNodes[i].classList.add('flipped');
+                        } else {
+                            charSpan.innerText = "";
+                        }
                     }
-                } else {
-                    charSpan.innerText = "";
                 }
+            }
+        }
+
+        function showMessage(msg) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.innerText = msg;
+            if (!gameOver && msg !== "") {
+                setTimeout(() => { msgDiv.innerText = ""; }, 2500);
             }
         }
 
         function submitGuess() {
             if (gameOver) return;
             if (currentGuess.length !== 5) {
-                showMessage("Not enough letters!");
+                showMessage("Not enough letters");
+                
+                const currentRow = document.querySelectorAll('.row')[currentAttempt];
+                currentRow.style.transform = "translateX(-5px)";
+                setTimeout(() => currentRow.style.transform = "translateX(5px)", 100);
+                setTimeout(() => currentRow.style.transform = "translateX(0)", 200);
                 return;
             }
 
@@ -353,7 +469,6 @@
             let colors = new Array(5).fill('absent');
             let finalWordString = guessArray.join('');
 
-            // Pass 1: Exact Matches
             for (let i = 0; i < 5; i++) {
                 if (guessArray[i] === targetArray[i]) {
                     colors[i] = 'correct';
@@ -361,7 +476,6 @@
                 }
             }
 
-            // Pass 2: Partial Matches
             for (let i = 0; i < 5; i++) {
                 if (colors[i] === 'correct') continue;
                 let targetIndex = targetArray.indexOf(guessArray[i]);
@@ -371,42 +485,50 @@
                 }
             }
 
-            // Apply colors visually
             for (let i = 0; i < 5; i++) {
-                rowNodes[i].classList.remove('active');
-                rowNodes[i].classList.add(colors[i]);
+                rowNodes[i].classList.remove('active-row', 'filled');
+                setTimeout(() => {
+                    rowNodes[i].classList.add(colors[i]);
+                }, i * 150);
             }
 
             currentAttempt++;
             
-            if (finalWordString === TARGET_WORD) {
-                showMessage("Fantastic! You built the word.");
-                gameOver = true;
-            } else if (currentAttempt >= MAX_GUESSES) {
-                showMessage("Game Over. The word was " + TARGET_WORD);
-                gameOver = true;
-            } else {
-                currentGuess = []; 
-            }
+            setTimeout(() => {
+                if (finalWordString === TARGET_WORD) {
+                    showMessage("Genius! You decoded it.");
+                    gameOver = true;
+                } else if (currentAttempt >= MAX_GUESSES) {
+                    showMessage("Game Over. The word was " + TARGET_WORD);
+                    gameOver = true;
+                } else {
+                    currentGuess = []; 
+                    updateBoardUI(); 
+                }
+            }, 5 * 150 + 100); 
         }
 
-        // Debug Reveal Function
+        function loadSelectedDay() {
+            const select = document.getElementById('daySelect');
+            initGame(parseInt(select.value));
+        }
+
         function toggleDebug() {
             const debugText = document.getElementById('debugWord');
             if (debugText.style.visibility === 'visible') {
                 debugText.style.visibility = 'hidden';
-                debugText.innerText = '';
             } else {
                 debugText.style.visibility = 'visible';
-                debugText.innerText = 'Target: ' + TARGET_WORD;
+                debugText.innerText = TARGET_WORD;
             }
         }
 
-        // Keyboard Support
         document.addEventListener("keydown", (e) => {
             if (e.key === "Backspace") backspace();
             if (e.key === "Enter") submitGuess();
         });
+
+        window.onload = () => initGame(0);
     </script>
 </body>
 </html>
