@@ -3,22 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flip-dle - Daily Puzzle</title>
+    <title>Flip-dle - Play Now</title>
     <link href="https://fonts.googleapis.com/css2?family=Genos:wght@500;700;800&family=Iceland&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
+            /* Default Font */
             --app-font: 'Genos', sans-serif;
+            
+            /* Branding: Relaxing, vibrant mobile game aesthetic */
             --bg-gradient: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
             --board-bg: rgba(255, 255, 255, 0.08);
             --bank-bg: rgba(0, 0, 0, 0.2);
+            
             --text-color: #ffffff;
             --text-muted: #cbd5e1;
+            
+            /* Physical Tile Look */
             --tile-bg: #f8fafc;
             --tile-text: #0f172a;
             --tile-border: #e2e8f0;
             --tile-shadow: #94a3b8;
+            
             --active-border: #38bdf8;
             --accent-color: #fbbf24; 
+            
+            /* Graded Colors */
             --correct: #22c55e;
             --present: #eab308;
             --absent: #64748b;
@@ -70,6 +79,7 @@
             text-transform: lowercase; color: var(--tile-text); box-sizing: border-box; line-height: 1; 
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        
         .board-tile.filled { 
             background-color: var(--tile-bg); border: none; box-shadow: 0 4px 0 var(--tile-shadow);
             transform: translateY(-2px); animation: pop 0.2s ease-out; 
@@ -94,9 +104,13 @@
         .bank-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--tile-shadow); }
         .bank-tile:active { transform: translateY(4px); box-shadow: 0 0 0 var(--tile-shadow); }
 
-        .char-span { display: inline-block; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s; margin-top: 5px; }
+        .char-span { display: inline-block; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s; margin-top: 5px;}
         .flipped .char-span { transform: rotate(180deg); margin-top: -5px; }
-        .bank-tile.flipped .char-span, .board-tile.filled.flipped .char-span { color: #d97706; }
+        
+        .bank-tile.flipped .char-span,
+        .board-tile.filled.flipped .char-span {
+            color: #d97706; 
+        }
 
         .flip-btn {
             position: absolute; top: -5px; right: -5px; background: #0f172a; border: 2px solid #38bdf8;
@@ -123,6 +137,7 @@
         button.action-btn.share-btn { background: #3b82f6; box-shadow: 0 5px 0 #1d4ed8; width: 100%; flex: 1; display: none;}
         button.action-btn.share-btn:active { box-shadow: 0 0 0 #1d4ed8; }
 
+        /* Graded Colors */
         .board-tile.correct, .board-tile.present, .board-tile.absent { transform: translateY(0); box-shadow: none; color: white; border: none; }
         .board-tile.correct { background-color: var(--correct); }
         .board-tile.present { background-color: var(--present); }
@@ -155,14 +170,15 @@
         .google-btn { background-color: #10b981; box-shadow: 0 4px 0 #059669; }
         .google-btn:active { box-shadow: 0 0 0 #059669; }
 
-        /* Debug Menu - Simplified for Font Only */
+        /* Debug Menu */
         .debug-container { margin-top: 50px; padding: 15px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 12px; text-align: center; background-color: rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 10px; align-items: center; }
         .debug-container h3 { margin: 0; font-size: 1.2rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-family: 'Nunito', sans-serif;}
         .debug-controls { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap;}
-        select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 12px; font-size: 1.2rem; border-radius: 6px; cursor: pointer; font-family: var(--app-font); outline: none; font-weight: 700; }
-        select:hover { background: rgba(255,255,255,0.2); }
+        .debug-btn, select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 12px; font-size: 1.2rem; border-radius: 6px; cursor: pointer; font-family: var(--app-font); outline: none; font-weight: 700; }
+        .debug-btn:hover, select:hover { background: rgba(255,255,255,0.2); }
         select option { background: #0f172a; color: white; }
-        
+        #debugWord { font-size: 1.4rem; color: var(--correct); visibility: hidden; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;}
+
         /* Tutorial Modal Overlay */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
         .modal-content { background: linear-gradient(180deg, #1e293b, #0f172a); padding: 40px 30px; border-radius: 20px; border: 2px solid #334155; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); box-sizing: border-box; }
@@ -222,12 +238,26 @@
     <div class="debug-container">
         <h3>Developer Options</h3>
         <div class="debug-controls">
+            <select id="daySelect" onchange="loadSelectedDay()" title="Override Day">
+                <option value="" disabled selected>Override Day...</option>
+                <option value="0">Day 1</option>
+                <option value="1">Day 2</option>
+                <option value="2">Day 3</option>
+                <option value="3">Day 4</option>
+                <option value="4">Day 5</option>
+                <option value="5">Day 6</option>
+                <option value="6">Day 7</option>
+            </select>
+            
             <select id="fontSelect" onchange="changeFont()" title="Change Font">
                 <option value="'Genos', sans-serif">Font: Genos</option>
                 <option value="'Nunito', sans-serif">Font: Nunito</option>
                 <option value="'Iceland', sans-serif">Font: Iceland</option>
             </select>
+
+            <button class="debug-btn" onclick="toggleDebug()">Reveal Target</button>
         </div>
+        <span id="debugWord"></span>
     </div>
 
     <script>
@@ -254,7 +284,7 @@
         const MAX_GUESSES = 4;
         let TARGET_WORD = "";
         let currentDayIndex = 0;
-        let currentPuzzleNumber = 1; // Used for the share text
+        let currentPuzzleNumber = 1; 
         let currentBankData = [];
         let currentAttempt = 0;
         let currentGuess = []; 
@@ -262,41 +292,35 @@
         let isWin = false;
         let isCheckingWord = false;
 
-        // --- Daily UTC Sync Logic ---
+        // Daily UTC Sync Logic
         function calculateDailyPuzzle() {
-            // Set the "Epoch" or Launch Date for the game (Set to today, UTC)
-            // Note: Month is 0-indexed in JS (0 = Jan, 3 = April)
             const launchDate = new Date(Date.UTC(2026, 3, 15)); 
-            
-            // Get current time in UTC
             const now = new Date();
             const currentUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
-            // Calculate the difference in days
             const diffTime = Math.abs(currentUTC - launchDate);
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
 
-            // Use Modulo to loop through the 7 levels infinitely
             const levelIndex = diffDays % gameLevels.length;
-            
-            // Add 1 to diffDays so the first day is "Day 1" not "Day 0"
             return { index: levelIndex, puzzleNumber: diffDays + 1 };
         }
 
-        function initGame() {
-            const dailyData = calculateDailyPuzzle();
-            currentDayIndex = dailyData.index;
-            currentPuzzleNumber = dailyData.puzzleNumber;
+        // Accepts manual override from debug menu
+        function initGame(overrideIndex = null) {
+            if (overrideIndex !== null) {
+                currentDayIndex = overrideIndex;
+                currentPuzzleNumber = overrideIndex + 1;
+            } else {
+                const dailyData = calculateDailyPuzzle();
+                currentDayIndex = dailyData.index;
+                currentPuzzleNumber = dailyData.puzzleNumber;
+            }
             
             const level = gameLevels[currentDayIndex];
             TARGET_WORD = level.word;
             
-            // Use the puzzle number as a seed so the shuffle is random, but the same for everyone on that UTC day
-            // For a simple web app without a complex seeded PRNG library, we will use a pseudo-random shuffle
-            // based on the date to ensure the board looks the same for all players today.
             currentBankData = level.bank.map(item => ({ ...item, isFlipped: false }));
             
-            // Simple deterministic shuffle based on the day number
             let seed = currentPuzzleNumber;
             function random() {
                 let x = Math.sin(seed++) * 10000;
@@ -314,8 +338,10 @@
             isWin = false;
             isCheckingWord = false;
             
-            document.getElementById('dayIndicator').innerText = `Puzzle #${currentPuzzleNumber}`;
+            // If we manually override, display "Test Day X" to avoid confusion
+            document.getElementById('dayIndicator').innerText = overrideIndex !== null ? `Test Day ${currentPuzzleNumber}` : `Puzzle #${currentPuzzleNumber}`;
             document.getElementById('message').innerText = "";
+            document.getElementById('debugWord').style.visibility = 'hidden';
 
             document.getElementById('gameArea').style.display = 'flex';
             document.getElementById('endScreen').style.display = 'none';
@@ -328,6 +354,13 @@
             buildBoard();
             buildBank();
             updateBoardUI();
+        }
+
+        function loadSelectedDay() {
+            const select = document.getElementById('daySelect');
+            if (select.value !== "") {
+                initGame(parseInt(select.value));
+            }
         }
 
         function buildBoard() {
@@ -550,6 +583,7 @@
 
         function generateShareText() {
             const attemptStr = isWin ? currentAttempt : 'X';
+            // Added the requested Share URL to the bottom of the payload
             let shareText = `Flip-dle #${currentPuzzleNumber} ${attemptStr}/${MAX_GUESSES}\n\n`;
 
             for (let r = 0; r < currentAttempt; r++) {
@@ -588,6 +622,16 @@
             });
         }
 
+        function toggleDebug() {
+            const debugText = document.getElementById('debugWord');
+            if (debugText.style.visibility === 'visible') {
+                debugText.style.visibility = 'hidden';
+            } else {
+                debugText.style.visibility = 'visible';
+                debugText.innerText = TARGET_WORD;
+            }
+        }
+
         document.addEventListener("keydown", (e) => {
             if (!document.getElementById('tutorialModal').classList.contains('hidden')) {
                 if (e.key === "Enter") closeTutorial();
@@ -597,7 +641,7 @@
             if (e.key === "Enter") submitGuess();
         });
 
-        // Initialize the game automatically based on the UTC date
+        // Initialize without override parameters to load the UTC daily puzzle on start
         window.onload = () => initGame();
     </script>
 </body>
