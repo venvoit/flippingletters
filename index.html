@@ -7,8 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Genos:wght@500;700;800&family=Iceland&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Default Font */
-            --app-font: 'Genos', sans-serif;
+            /* Default Font - Changed to Iceland */
+            --app-font: 'Iceland', sans-serif;
             
             /* Branding */
             --bg-gradient: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
@@ -120,9 +120,6 @@
         .char-span { display: inline-block; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s; margin-top: 5px;}
         .flipped .char-span { transform: rotate(180deg); margin-top: -5px; }
         
-        .bank-tile.flipped .char-span,
-        .board-tile.active-row.flipped .char-span { color: #d97706; }
-
         .board-tile.correct .char-span,
         .board-tile.present .char-span,
         .board-tile.absent .char-span { color: #ffffff !important; }
@@ -268,9 +265,9 @@
             </select>
             
             <select id="fontSelect" onchange="changeFont()" title="Change Font">
+                <option value="'Iceland', sans-serif">Font: Iceland</option>
                 <option value="'Genos', sans-serif">Font: Genos</option>
                 <option value="'Nunito', sans-serif">Font: Nunito</option>
-                <option value="'Iceland', sans-serif">Font: Iceland</option>
             </select>
 
             <button class="debug-btn" onclick="toggleDebug()">Reveal Target</button>
@@ -283,27 +280,13 @@
         function changeFont() { document.documentElement.style.setProperty('--app-font', document.getElementById('fontSelect').value); }
 
         // --- Game Logic ---
-        // UPDATED: Strict No-Duplicate Flip Pair Data + Decoy Vowels Included
         const gameLevels = [
-            // plumb: p(d), l, u(n), m(w), b(q) | Decoys: o, a(e), s
             { word: "plumb", bank: [{ char: 'd', flipChar: 'p' }, { char: 'l', flipChar: null }, { char: 'n', flipChar: 'u' }, { char: 'w', flipChar: 'm' }, { char: 'q', flipChar: 'b' }, { char: 'o', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 's', flipChar: null }] },
-            
-            // squad: s, q(b), u(n), a(e), d(p) | Decoys: o, i, t
             { word: "squad", bank: [{ char: 's', flipChar: null }, { char: 'b', flipChar: 'q' }, { char: 'n', flipChar: 'u' }, { char: 'e', flipChar: 'a' }, { char: 'p', flipChar: 'd' }, { char: 'o', flipChar: null }, { char: 'i', flipChar: null }, { char: 't', flipChar: null }] },
-            
-            // crown: c, r, o, w(m), n(u) | Decoys: a(e), l, s
             { word: "crown", bank: [{ char: 'c', flipChar: null }, { char: 'r', flipChar: null }, { char: 'o', flipChar: null }, { char: 'm', flipChar: 'w' }, { char: 'u', flipChar: 'n' }, { char: 'a', flipChar: 'e' }, { char: 'l', flipChar: null }, { char: 's', flipChar: null }] },
-            
-            // equip: e(a), q(b), u(n), i, p(d) | Decoys: o, r, s
             { word: "equip", bank: [{ char: 'a', flipChar: 'e' }, { char: 'b', flipChar: 'q' }, { char: 'n', flipChar: 'u' }, { char: 'i', flipChar: null }, { char: 'd', flipChar: 'p' }, { char: 'o', flipChar: null }, { char: 'r', flipChar: null }, { char: 's', flipChar: null }] },
-            
-            // clamp: c, l, a(e), m(w), p(d) | Decoys: o, i, r (Replaced 'maple' due to a/e conflict)
             { word: "clamp", bank: [{ char: 'c', flipChar: null }, { char: 'l', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'w', flipChar: 'm' }, { char: 'd', flipChar: 'p' }, { char: 'o', flipChar: null }, { char: 'i', flipChar: null }, { char: 'r', flipChar: null }] },
-            
-            // blend: b(q), l, e(a), n(u), d(p) | Decoys: o, i, r
             { word: "blend", bank: [{ char: 'q', flipChar: 'b' }, { char: 'l', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'u', flipChar: 'n' }, { char: 'p', flipChar: 'd' }, { char: 'o', flipChar: null }, { char: 'i', flipChar: null }, { char: 'r', flipChar: null }] },
-            
-            // blank: b(q), l, a(e), n(u), k | Decoys: i, o, s (Replaced 'proud' due to p/d conflict)
             { word: "blank", bank: [{ char: 'q', flipChar: 'b' }, { char: 'l', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'u', flipChar: 'n' }, { char: 'k', flipChar: null }, { char: 'i', flipChar: null }, { char: 'o', flipChar: null }, { char: 's', flipChar: null }] }
         ];
 
