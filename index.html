@@ -45,16 +45,9 @@
             text-align: center; will-change: transform; line-height: 1.1;
         }
 
-        .title-spin-wrapper {
-            position: relative;
-            display: inline-flex; align-items: center; justify-content: center;
-        }
-
+        .title-spin-wrapper { position: relative; display: inline-flex; align-items: center; justify-content: center; }
         .title-front { display: inline-block; color: var(--accent-color); transform-origin: center center; }
-        .title-back { 
-            position: absolute; color: var(--accent-color); transform-origin: center center;
-            transform: rotate(-180deg); opacity: 0; 
-        }
+        .title-back { position: absolute; color: var(--accent-color); transform-origin: center center; transform: rotate(-180deg); opacity: 0; }
 
         .title-front.do-spin { animation: titleSpinOut 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         .title-back.do-spin { animation: titleSpinIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
@@ -541,7 +534,6 @@
                 unlockInput(); return;
             }
 
-            // FIX: Word is valid! Instantly revert the button text so it doesn't feel laggy
             els.submitBtn.innerText = "Submit";
 
             let targetArray = state.targetWord.split('');
@@ -597,7 +589,6 @@
                 triggerFireworks();
             }
 
-            // FIX: Drastically reduced delay so the message pops *during* the fireworks
             setTimeout(() => {
                 els.message.style.display = 'none'; els.bankContainer.style.display = 'none';
                 els.submitBtn.style.display = 'none'; els.backspaceBtn.style.display = 'none';
@@ -639,6 +630,9 @@
                     }, b * 400); 
                 }
 
+                // FIX: Grab the exact time the animation actually starts
+                const startTime = performance.now();
+
                 function animate() {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     particles = particles.filter(p => p.alpha > 0);
@@ -650,8 +644,13 @@
                         ctx.globalAlpha = Math.max(0, p.alpha); ctx.fillStyle = p.color;
                         ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
                     }
-                    if (particles.length > 0 || performance.now() < 2000) { requestAnimationFrame(animate); } 
-                    else { canvas.remove(); }
+                    
+                    // FIX: Compare against the captured startTime, so it runs for a full 2000ms
+                    if (particles.length > 0 || performance.now() - startTime < 2000) { 
+                        requestAnimationFrame(animate); 
+                    } else { 
+                        canvas.remove(); 
+                    }
                 }
                 animate();
             }, 500); 
