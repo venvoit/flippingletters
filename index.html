@@ -45,9 +45,16 @@
             text-align: center; will-change: transform; line-height: 1.1;
         }
 
-        .title-spin-wrapper { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+        .title-spin-wrapper {
+            position: relative;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+
         .title-front { display: inline-block; color: var(--accent-color); transform-origin: center center; }
-        .title-back { position: absolute; color: var(--accent-color); transform-origin: center center; transform: rotate(-180deg); opacity: 0; }
+        .title-back { 
+            position: absolute; color: var(--accent-color); transform-origin: center center;
+            transform: rotate(-180deg); opacity: 0; 
+        }
 
         .title-front.do-spin { animation: titleSpinOut 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         .title-back.do-spin { animation: titleSpinIn 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
@@ -167,7 +174,6 @@
         button.action-btn.share-btn { background: #3b82f6; box-shadow: 0 5px 0 #1d4ed8; width: 100%; flex: 1; display: none;}
         button.action-btn.share-btn:active { box-shadow: 0 0 0 #1d4ed8; }
 
-        /* SAFETY FIX: Added !important tags to ensure grading colors always win */
         .board-tile.correct, .board-tile.present, .board-tile.absent { transform: translateY(0) !important; box-shadow: none !important; color: white !important; border: none !important; }
         .board-tile.correct { background-color: var(--correct) !important; }
         .board-tile.present { background-color: var(--present) !important; }
@@ -182,6 +188,7 @@
         }
         @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
+        /* Banner Ad */
         #bannerAd {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 100%); color: white; text-decoration: none;
@@ -239,7 +246,7 @@
             <h2>How to Play</h2>
             <img src="flip-gif.gif" alt="Demonstration of flipping a letter tile" class="tutorial-gif">
             <p class="tutorial-text">
-                Guess the 5-letter word using only your bank.<br><br>
+                Guess the 5-letter word using only the letter tiles.<br><br>
                 <strong>The Twist:</strong> Tap the <span class="highlight">↻</span> icon to spin tiles 180° and reveal hidden letters!
             </p>
             <button class="close-modal-btn" id="closeTutorialBtn">Play Now</button>
@@ -392,6 +399,11 @@
             els.bankContainer.style.display = 'block'; els.endMessage.style.display = 'none';
             els.message.style.display = 'block'; els.shareBtn.style.display = 'none';
             els.submitBtn.style.display = 'block'; els.backspaceBtn.style.display = 'block';
+            
+            // FIX: Force submit button text to reset when starting a new day
+            els.submitBtn.innerText = "Submit";
+            els.submitBtn.disabled = false;
+            
             els.message.innerText = ""; document.getElementById('debugWord').style.visibility = 'hidden';
             document.body.style.pointerEvents = 'auto'; 
 
@@ -461,7 +473,6 @@
                     if (tileState) {
                         spanEl.innerText = tileState.logicalChar; 
                         
-                        // FIX: Mutually exclusive classes prevent background color collisions
                         if (tileState.status && tileState.status !== 'tbd') {
                             tileEl.classList.add(tileState.status);
                         } else {
@@ -530,6 +541,9 @@
                 showMessage("Not in word list"); triggerRowShake();
                 unlockInput(); return;
             }
+
+            // FIX: Word is valid! Instantly revert the button text so it doesn't feel laggy
+            els.submitBtn.innerText = "Submit";
 
             let targetArray = state.targetWord.split('');
             
