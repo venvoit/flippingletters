@@ -38,7 +38,6 @@
             touch-action: manipulation;
         }
 
-        /* --- THE MAGICAL MORPHING TITLE --- */
         h1 { 
             margin: 0 0 5px 0; font-size: 2.2rem; font-weight: 900; 
             text-shadow: 0 2px 4px rgba(0,0,0,0.3); text-transform: lowercase; 
@@ -77,7 +76,6 @@
         
         #gameArea { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; z-index: 10; }
 
-        /* Game Board */
         #board {
             display: grid; grid-template-rows: repeat(4, 1fr); grid-gap: 6px;
             margin-bottom: 20px; padding: 12px; background: var(--board-bg);
@@ -100,7 +98,6 @@
             transform: translateY(-2px); animation: pop 0.2s ease-out; 
         }
 
-        /* --- BANK TILES --- */
         .bank-tile {
             position: relative; background-color: var(--tile-bg); color: var(--tile-text);
             cursor: pointer; box-shadow: 0 4px 0 var(--tile-shadow); transition: all 0.1s;
@@ -125,7 +122,6 @@
         .bank-tile.flipped .char-back { transform: rotate(0deg); opacity: 1; }
 
         .board-tile .char-span { margin-top: 5px; display: inline-block; }
-        .board-tile.correct .char-span, .board-tile.present .char-span, .board-tile.absent .char-span { color: #ffffff !important; }
 
         @keyframes pop { 0% { transform: scale(1) translateY(0); } 50% { transform: scale(1.1) translateY(-4px); } 100% { transform: scale(1) translateY(-2px); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-6px); } }
@@ -181,7 +177,6 @@
         }
         @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* Banner Ad */
         #bannerAd {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 100%); color: white; text-decoration: none;
@@ -199,7 +194,6 @@
         }
         .banner-cta:active { transform: translateY(3px); box-shadow: 0 0 0 #b45309; }
 
-        /* Settings Cog & Dev Menu */
         .settings-btn {
             position: fixed; bottom: 80px; right: 15px; background: rgba(0, 0, 0, 0.3); color: var(--text-muted);
             border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 50%;
@@ -220,7 +214,6 @@
         select option { background: #0f172a; color: white; }
         #debugWord { font-size: 1.4rem; color: var(--correct); visibility: hidden; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;}
 
-        /* Tutorial Modal */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.9); display: flex; justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(5px); }
         .modal-content { background: linear-gradient(180deg, #1e293b, #0f172a); padding: 40px 30px; border-radius: 20px; border: 2px solid #334155; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); box-sizing: border-box; }
         .modal-content h2 { margin-top: 0; color: white; font-size: 2.5rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 800; margin-bottom: 20px;}
@@ -279,13 +272,13 @@
         <div class="debug-controls">
             <select id="daySelect" aria-label="Override Day">
                 <option value="" disabled selected>Override Day...</option>
-                <option value="0">Day 1</option> <option value="1">Day 2</option>
-                <option value="2">Day 3</option> <option value="3">Day 4</option>
-                <option value="4">Day 5</option> <option value="5">Day 6</option>
-                <option value="6">Day 7</option> <option value="7">Day 8 (Toned)</option>
-                <option value="8">Day 9</option> <option value="9">Day 10</option>
-                <option value="10">Day 11</option> <option value="11">Day 12</option>
-                <option value="12">Day 13</option> <option value="13">Day 14</option>
+                <option value="0">Day 1</option><option value="1">Day 2</option><option value="2">Day 3</option>
+                <option value="3">Day 4</option><option value="4">Day 5</option><option value="5">Day 6</option>
+                <option value="6">Day 7</option><option value="7">Day 8</option><option value="8">Day 9</option>
+                <option value="9">Day 10</option><option value="10">Day 11</option><option value="11">Day 12</option>
+                <option value="12">Day 13</option><option value="13">Day 14</option><option value="14">Day 15</option>
+                <option value="15">Day 16</option><option value="16">Day 17</option><option value="17">Day 18</option>
+                <option value="18">Day 19</option><option value="19">Day 20</option><option value="20">Day 21</option>
             </select>
             <select id="fontSelect" aria-label="Change Font">
                 <option value="'Tourney', sans-serif">Font: Tourney</option>
@@ -314,21 +307,30 @@
         const ANIMATION_DELAY_MS = 150;
         const SHAKE_DELAY_MS = 300;
 
+        // --- THE GOLDILOCKS LIST ---
+        // A mix of required flips, static targets, and evil twin distractors to prevent predictability.
         const gameLevels = [
-            { word: "plumb", bank: [{ char: 'd', flipChar: 'p' }, { char: 'l', flipChar: null }, { char: 'n', flipChar: 'u' }, { char: 'w', flipChar: 'm' }, { char: 'q', flipChar: 'b' }, { char: 'o', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 's', flipChar: null }, { char: 'f', flipChar: null }, { char: 't', flipChar: null }] },
-            { word: "squad", bank: [{ char: 's', flipChar: null }, { char: 'b', flipChar: 'q' }, { char: 'n', flipChar: 'u' }, { char: 'e', flipChar: 'a' }, { char: 'p', flipChar: 'd' }, { char: 'o', flipChar: null }, { char: 'i', flipChar: null }, { char: 't', flipChar: null }, { char: 'c', flipChar: null }, { char: 'r', flipChar: null }] },
-            { word: "crown", bank: [{ char: 'c', flipChar: null }, { char: 'r', flipChar: null }, { char: 'o', flipChar: null }, { char: 'm', flipChar: 'w' }, { char: 'u', flipChar: 'n' }, { char: 'a', flipChar: 'e' }, { char: 'l', flipChar: null }, { char: 's', flipChar: null }, { char: 'k', flipChar: null }, { char: 'i', flipChar: null }] },
-            { word: "equip", bank: [{ char: 'a', flipChar: 'e' }, { char: 'b', flipChar: 'q' }, { char: 'n', flipChar: 'u' }, { char: 'i', flipChar: null }, { char: 'd', flipChar: 'p' }, { char: 'o', flipChar: null }, { char: 'r', flipChar: null }, { char: 's', flipChar: null }, { char: 'm', flipChar: 'w' }, { char: 't', flipChar: null }] },
-            { word: "clamp", bank: [{ char: 'c', flipChar: null }, { char: 'l', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'w', flipChar: 'm' }, { char: 'd', flipChar: 'p' }, { char: 'o', flipChar: null }, { char: 'i', flipChar: null }, { char: 'r', flipChar: null }, { char: 't', flipChar: null }, { char: 'f', flipChar: null }] },
-            { word: "blend", bank: [{ char: 'q', flipChar: 'b' }, { char: 'l', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'u', flipChar: 'n' }, { char: 'p', flipChar: 'd' }, { char: 'o', flipChar: null }, { char: 'i', flipChar: null }, { char: 'r', flipChar: null }, { char: 't', flipChar: null }, { char: 'c', flipChar: null }] },
-            { word: "blank", bank: [{ char: 'q', flipChar: 'b' }, { char: 'l', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'u', flipChar: 'n' }, { char: 'k', flipChar: null }, { char: 'i', flipChar: null }, { char: 'o', flipChar: null }, { char: 's', flipChar: null }, { char: 'r', flipChar: null }, { char: 't', flipChar: null }] },
-            { word: "toned", bank: [{ char: 't', flipChar: null }, { char: 'o', flipChar: null }, { char: 'u', flipChar: 'n' }, { char: 'a', flipChar: 'e' }, { char: 'p', flipChar: 'd' }, { char: 's', flipChar: null }, { char: 'c', flipChar: null }, { char: 'i', flipChar: null }, { char: 'l', flipChar: null }, { char: 'r', flipChar: null }] },
-            { word: "chime", bank: [{ char: 'c', flipChar: null }, { char: 'h', flipChar: null }, { char: 'i', flipChar: null }, { char: 'w', flipChar: 'm' }, { char: 'a', flipChar: 'e' }, { char: 'r', flipChar: null }, { char: 't', flipChar: null }, { char: 'o', flipChar: null }, { char: 's', flipChar: null }, { char: 'l', flipChar: null }] },
-            { word: "spoil", bank: [{ char: 's', flipChar: null }, { char: 'd', flipChar: 'p' }, { char: 'o', flipChar: null }, { char: 'i', flipChar: null }, { char: 'l', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'u', flipChar: 'n' }, { char: 'c', flipChar: null }, { char: 'r', flipChar: null }, { char: 't', flipChar: null }] },
-            { word: "wreck", bank: [{ char: 'm', flipChar: 'w' }, { char: 'r', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'c', flipChar: null }, { char: 'k', flipChar: null }, { char: 'p', flipChar: 'd' }, { char: 'o', flipChar: null }, { char: 's', flipChar: null }, { char: 'i', flipChar: null }, { char: 'l', flipChar: null }] },
-            { word: "flash", bank: [{ char: 'f', flipChar: null }, { char: 'l', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 's', flipChar: null }, { char: 'h', flipChar: null }, { char: 'p', flipChar: 'd' }, { char: 'n', flipChar: 'u' }, { char: 'c', flipChar: null }, { char: 'o', flipChar: null }, { char: 'r', flipChar: null }] },
-            { word: "query", bank: [{ char: 'b', flipChar: 'q' }, { char: 'n', flipChar: 'u' }, { char: 'a', flipChar: 'e' }, { char: 'r', flipChar: null }, { char: 'y', flipChar: null }, { char: 'c', flipChar: null }, { char: 't', flipChar: null }, { char: 'o', flipChar: null }, { char: 'i', flipChar: null }, { char: 's', flipChar: null }] },
-            { word: "bacon", bank: [{ char: 'q', flipChar: 'b' }, { char: 'e', flipChar: 'a' }, { char: 'c', flipChar: null }, { char: 'o', flipChar: null }, { char: 'u', flipChar: 'n' }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null }, { char: 'r', flipChar: null }, { char: 'l', flipChar: null }] }
+            { word: "squad", bank: [{ char: 's', flipChar: null }, { char: 'b', flipChar: 'q' }, { char: 'u', flipChar: 'n' }, { char: 'e', flipChar: 'a' }, { char: 'd', flipChar: 'p' }, { char: 'p', flipChar: 'd' }, { char: 'n', flipChar: 'u' }, { char: 't', flipChar: null }, { char: 'i', flipChar: null }, { char: 'o', flipChar: null }] },
+            { word: "blend", bank: [{ char: 'b', flipChar: 'q' }, { char: 'l', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'n', flipChar: 'u' }, { char: 'p', flipChar: 'd' }, { char: 'q', flipChar: 'b' }, { char: 'm', flipChar: 'w' }, { char: 's', flipChar: null }, { char: 'k', flipChar: null }, { char: 'i', flipChar: null }] },
+            { word: "aware", bank: [{ char: 'a', flipChar: 'e' }, { char: 'w', flipChar: 'm' }, { char: 'e', flipChar: 'a' }, { char: 'r', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'm', flipChar: 'w' }, { char: 'u', flipChar: 'n' }, { char: 'h', flipChar: null }, { char: 't', flipChar: null }, { char: 'o', flipChar: null }] },
+            { word: "chime", bank: [{ char: 'c', flipChar: null }, { char: 'h', flipChar: null }, { char: 'i', flipChar: null }, { char: 'w', flipChar: 'm' }, { char: 'e', flipChar: 'a' }, { char: 'a', flipChar: 'e' }, { char: 'm', flipChar: 'w' }, { char: 'l', flipChar: null }, { char: 's', flipChar: null }, { char: 't', flipChar: null }] },
+            { word: "pound", bank: [{ char: 'p', flipChar: 'd' }, { char: 'o', flipChar: null }, { char: 'n', flipChar: 'u' }, { char: 'u', flipChar: 'n' }, { char: 'd', flipChar: 'p' }, { char: 'd', flipChar: 'p' }, { char: 'm', flipChar: 'w' }, { char: 's', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'r', flipChar: null }] },
+            { word: "sweep", bank: [{ char: 's', flipChar: null }, { char: 'w', flipChar: 'm' }, { char: 'a', flipChar: 'e' }, { char: 'e', flipChar: 'a' }, { char: 'p', flipChar: 'd' }, { char: 'm', flipChar: 'w' }, { char: 'b', flipChar: 'q' }, { char: 't', flipChar: null }, { char: 'l', flipChar: null }, { char: 'c', flipChar: null }] },
+            { word: "badge", bank: [{ char: 'b', flipChar: 'q' }, { char: 'e', flipChar: 'a' }, { char: 'p', flipChar: 'd' }, { char: 'g', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'q', flipChar: 'b' }, { char: 'n', flipChar: 'u' }, { char: 'r', flipChar: null }, { char: 'h', flipChar: null }, { char: 'o', flipChar: null }] },
+            { word: "realm", bank: [{ char: 'r', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'a', flipChar: 'e' }, { char: 'l', flipChar: null }, { char: 'm', flipChar: 'w' }, { char: 'w', flipChar: 'm' }, { char: 'p', flipChar: 'd' }, { char: 's', flipChar: null }, { char: 'k', flipChar: null }, { char: 't', flipChar: null }] },
+            { word: "panel", bank: [{ char: 'd', flipChar: 'p' }, { char: 'a', flipChar: 'e' }, { char: 'n', flipChar: 'u' }, { char: 'e', flipChar: 'a' }, { char: 'l', flipChar: null }, { char: 'u', flipChar: 'n' }, { char: 'q', flipChar: 'b' }, { char: 'm', flipChar: 'w' }, { char: 'r', flipChar: null }, { char: 's', flipChar: null }] },
+            { word: "dunce", bank: [{ char: 'd', flipChar: 'p' }, { char: 'n', flipChar: 'u' }, { char: 'n', flipChar: 'u' }, { char: 'c', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'u', flipChar: 'n' }, { char: 'p', flipChar: 'd' }, { char: 'l', flipChar: null }, { char: 'h', flipChar: null }, { char: 'o', flipChar: null }] },
+            { word: "prawn", bank: [{ char: 'p', flipChar: 'd' }, { char: 'r', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'w', flipChar: 'm' }, { char: 'u', flipChar: 'n' }, { char: 'd', flipChar: 'p' }, { char: 'm', flipChar: 'w' }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'l', flipChar: null }] },
+            { word: "moped", bank: [{ char: 'w', flipChar: 'm' }, { char: 'o', flipChar: null }, { char: 'd', flipChar: 'p' }, { char: 'e', flipChar: 'a' }, { char: 'd', flipChar: 'p' }, { char: 'm', flipChar: 'w' }, { char: 'a', flipChar: 'e' }, { char: 'r', flipChar: null }, { char: 's', flipChar: null }, { char: 't', flipChar: null }] },
+            { word: "endow", bank: [{ char: 'e', flipChar: 'a' }, { char: 'n', flipChar: 'u' }, { char: 'p', flipChar: 'd' }, { char: 'o', flipChar: null }, { char: 'w', flipChar: 'm' }, { char: 'u', flipChar: 'n' }, { char: 'a', flipChar: 'e' }, { char: 'd', flipChar: 'p' }, { char: 's', flipChar: null }, { char: 'k', flipChar: null }] },
+            { word: "stamp", bank: [{ char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'm', flipChar: 'w' }, { char: 'd', flipChar: 'p' }, { char: 'p', flipChar: 'd' }, { char: 'a', flipChar: 'e' }, { char: 'w', flipChar: 'm' }, { char: 'c', flipChar: null }, { char: 'l', flipChar: null }] },
+            { word: "blind", bank: [{ char: 'q', flipChar: 'b' }, { char: 'l', flipChar: null }, { char: 'i', flipChar: null }, { char: 'n', flipChar: 'u' }, { char: 'd', flipChar: 'p' }, { char: 'b', flipChar: 'q' }, { char: 'u', flipChar: 'n' }, { char: 'r', flipChar: null }, { char: 's', flipChar: null }, { char: 'o', flipChar: null }] },
+            { word: "equal", bank: [{ char: 'a', flipChar: 'e' }, { char: 'b', flipChar: 'q' }, { char: 'n', flipChar: 'u' }, { char: 'a', flipChar: 'e' }, { char: 'l', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'q', flipChar: 'b' }, { char: 'r', flipChar: null }, { char: 'i', flipChar: null }, { char: 't', flipChar: null }] },
+            { word: "spend", bank: [{ char: 's', flipChar: null }, { char: 'p', flipChar: 'd' }, { char: 'e', flipChar: 'a' }, { char: 'n', flipChar: 'u' }, { char: 'p', flipChar: 'd' }, { char: 'a', flipChar: 'e' }, { char: 'd', flipChar: 'p' }, { char: 'u', flipChar: 'n' }, { char: 'k', flipChar: null }, { char: 'r', flipChar: null }] },
+            { word: "maple", bank: [{ char: 'm', flipChar: 'w' }, { char: 'e', flipChar: 'a' }, { char: 'd', flipChar: 'p' }, { char: 'l', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'w', flipChar: 'm' }, { char: 'a', flipChar: 'e' }, { char: 'q', flipChar: 'b' }, { char: 's', flipChar: null }, { char: 'o', flipChar: null }] },
+            { word: "weave", bank: [{ char: 'w', flipChar: 'm' }, { char: 'e', flipChar: 'a' }, { char: 'e', flipChar: 'a' }, { char: 'v', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'm', flipChar: 'w' }, { char: 'a', flipChar: 'e' }, { char: 't', flipChar: null }, { char: 'r', flipChar: null }, { char: 's', flipChar: null }] },
+            { word: "under", bank: [{ char: 'n', flipChar: 'u' }, { char: 'n', flipChar: 'u' }, { char: 'p', flipChar: 'd' }, { char: 'e', flipChar: 'a' }, { char: 'r', flipChar: null }, { char: 'd', flipChar: 'p' }, { char: 'a', flipChar: 'e' }, { char: 'u', flipChar: 'n' }, { char: 'l', flipChar: null }, { char: 'k', flipChar: null }] },
+            { word: "panda", bank: [{ char: 'p', flipChar: 'd' }, { char: 'e', flipChar: 'a' }, { char: 'u', flipChar: 'n' }, { char: 'd', flipChar: 'p' }, { char: 'a', flipChar: 'e' }, { char: 'd', flipChar: 'p' }, { char: 'n', flipChar: 'u' }, { char: 'm', flipChar: 'w' }, { char: 's', flipChar: null }, { char: 'o', flipChar: null }] }
         ];
 
         const validWords = new Set(gameLevels.map(level => level.word));
@@ -392,10 +394,7 @@
             els.bankContainer.style.display = 'block'; els.endMessage.style.display = 'none';
             els.message.style.display = 'block'; els.shareBtn.style.display = 'none';
             els.submitBtn.style.display = 'block'; els.backspaceBtn.style.display = 'block';
-            
-            els.submitBtn.innerText = "Submit";
-            els.submitBtn.disabled = false;
-            
+            els.submitBtn.innerText = "Submit"; els.submitBtn.disabled = false;
             els.message.innerText = ""; document.getElementById('debugWord').style.visibility = 'hidden';
             document.body.style.pointerEvents = 'auto'; 
 
@@ -464,7 +463,6 @@
                     
                     if (tileState) {
                         spanEl.innerText = tileState.logicalChar; 
-                        
                         if (tileState.status && tileState.status !== 'tbd') {
                             tileEl.classList.add(tileState.status);
                         } else {
@@ -630,7 +628,6 @@
                     }, b * 400); 
                 }
 
-                // FIX: Grab the exact time the animation actually starts
                 const startTime = performance.now();
 
                 function animate() {
@@ -645,7 +642,6 @@
                         ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
                     }
                     
-                    // FIX: Compare against the captured startTime, so it runs for a full 2000ms
                     if (particles.length > 0 || performance.now() - startTime < 2000) { 
                         requestAnimationFrame(animate); 
                     } else { 
