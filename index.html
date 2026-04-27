@@ -77,7 +77,9 @@
         #gameArea { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; z-index: 10; }
 
         #board {
-            display: grid; grid-template-rows: repeat(4, 1fr); grid-gap: 6px;
+            display: grid; 
+            grid-template-rows: repeat(5, 1fr); /* UPGRADED TO 5 GUESSES */
+            grid-gap: 6px;
             margin-bottom: 20px; padding: 12px; background: var(--board-bg);
             border-radius: 16px; backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
@@ -106,21 +108,12 @@
         .bank-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--tile-shadow); }
         .bank-tile:active { transform: translateY(4px); box-shadow: 0 0 0 var(--tile-shadow); }
 
-        .char-container {
-            position: relative; width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .char-front, .char-back {
-            position: absolute; line-height: 1; margin-top: 5px;
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0s 0.2s;
-        }
+        .char-container { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .char-front, .char-back { position: absolute; line-height: 1; margin-top: 5px; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0s 0.2s; }
         .char-front { transform: rotate(0deg); opacity: 1; }
         .char-back { transform: rotate(-180deg); opacity: 0; }
-
         .bank-tile.flipped .char-front { transform: rotate(180deg); opacity: 0; }
         .bank-tile.flipped .char-back { transform: rotate(0deg); opacity: 1; }
-
         .board-tile .char-span { margin-top: 5px; display: inline-block; }
 
         @keyframes pop { 0% { transform: scale(1) translateY(0); } 50% { transform: scale(1.1) translateY(-4px); } 100% { transform: scale(1) translateY(-2px); } }
@@ -153,15 +146,19 @@
         button.action-btn {
             padding: 14px 18px; font-size: 1.3rem; font-weight: 800; background: var(--correct); color: white;
             border: none; border-radius: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-            font-family: var(--app-font); box-shadow: 0 5px 0 #15803d; transition: all 0.1s; flex: 1;
-            touch-action: manipulation;
+            font-family: var(--app-font); box-shadow: 0 5px 0 #15803d; transition: all 0.1s; flex: 1; touch-action: manipulation;
         }
         button.action-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #15803d; }
         button.action-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: 0 5px 0 #15803d; }
+        
         button.action-btn.backspace { background: #64748b; box-shadow: 0 5px 0 #334155; flex: 0.6; }
         button.action-btn.backspace:active:not(:disabled) { box-shadow: 0 0 0 #334155; }
-        button.action-btn.share-btn { background: #3b82f6; box-shadow: 0 5px 0 #1d4ed8; width: 100%; flex: 1; display: none;}
+        
+        button.action-btn.share-btn { background: #3b82f6; box-shadow: 0 5px 0 #1d4ed8; flex: 1; display: none;}
         button.action-btn.share-btn:active { box-shadow: 0 0 0 #1d4ed8; }
+
+        button.action-btn.stats-btn { background: #8b5cf6; box-shadow: 0 5px 0 #5b21b6; flex: 1; display: none;}
+        button.action-btn.stats-btn:active { box-shadow: 0 0 0 #5b21b6; }
 
         .board-tile.correct, .board-tile.present, .board-tile.absent { transform: translateY(0) !important; box-shadow: none !important; color: white !important; border: none !important; }
         .board-tile.correct { background-color: var(--correct) !important; }
@@ -181,18 +178,12 @@
             position: fixed; bottom: 0; left: 0; width: 100%;
             background: linear-gradient(90deg, #1e3a8a 0%, #3b82f6 100%); color: white; text-decoration: none;
             padding: 12px 20px; box-sizing: border-box; display: flex; justify-content: center; align-items: center;
-            z-index: 9000; box-shadow: 0 -4px 15px rgba(0,0,0,0.4); border-top: 1px solid #60a5fa;
-            touch-action: manipulation;
+            z-index: 9000; box-shadow: 0 -4px 15px rgba(0,0,0,0.4); border-top: 1px solid #60a5fa; touch-action: manipulation;
         }
         .banner-content { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 450px; gap: 15px; }
         .banner-img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .banner-text { font-size: 1rem; font-family: 'Nunito', sans-serif; font-weight: 700; line-height: 1.2; flex-grow: 1; }
-        .banner-cta { 
-            background: var(--accent-color); color: #0f172a; padding: 8px 16px; border-radius: 8px; 
-            font-weight: 900; font-size: 1.1rem; font-family: var(--app-font); text-transform: uppercase;
-            box-shadow: 0 3px 0 #b45309; white-space: nowrap;
-        }
-        .banner-cta:active { transform: translateY(3px); box-shadow: 0 0 0 #b45309; }
+        .banner-cta { background: var(--accent-color); color: #0f172a; padding: 8px 16px; border-radius: 8px; font-weight: 900; font-size: 1.1rem; font-family: var(--app-font); text-transform: uppercase; box-shadow: 0 3px 0 #b45309; white-space: nowrap; }
 
         .settings-btn {
             position: fixed; bottom: 80px; right: 15px; background: rgba(0, 0, 0, 0.3); color: var(--text-muted);
@@ -210,10 +201,8 @@
         .debug-container h3 { margin: 0; font-size: 1.2rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-family: 'Nunito', sans-serif;}
         .debug-controls { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap;}
         .debug-btn, select { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 12px; font-size: 1.2rem; border-radius: 6px; cursor: pointer; font-family: var(--app-font); outline: none; font-weight: 700; }
-        .debug-btn:hover, select:hover { background: rgba(255,255,255,0.2); }
-        select option { background: #0f172a; color: white; }
-        #debugWord { font-size: 1.4rem; color: var(--correct); visibility: hidden; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;}
 
+        /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.9); display: flex; justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(5px); }
         .modal-content { background: linear-gradient(180deg, #1e293b, #0f172a); padding: 40px 30px; border-radius: 20px; border: 2px solid #334155; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); box-sizing: border-box; }
         .modal-content h2 { margin-top: 0; color: white; font-size: 2.5rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 800; margin-bottom: 20px;}
@@ -223,6 +212,17 @@
         .close-modal-btn { padding: 16px 28px; font-size: 1.4rem; font-weight: 800; background: var(--accent-color); color: #000; border: none; border-radius: 12px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-family: var(--app-font); box-shadow: 0 5px 0 #b45309; transition: all 0.1s; width: 100%; touch-action: manipulation; }
         .close-modal-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #b45309; }
         .hidden { display: none !important; }
+
+        /* Stats UI */
+        .stats-grid { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
+        .stat-box { display: flex; flex-direction: column; align-items: center; }
+        .stat-num { font-size: 2.5rem; font-weight: 900; color: white; line-height: 1; }
+        .stat-label { font-size: 0.9rem; color: var(--text-muted); font-family: 'Nunito', sans-serif; font-weight: 700; text-transform: uppercase; }
+        .dist-chart { display: flex; flex-direction: column; gap: 6px; text-align: left; margin-bottom: 25px; }
+        .dist-row { display: flex; align-items: center; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1rem; color: white; }
+        .dist-label { width: 15px; }
+        .dist-bar { background: var(--absent); height: 22px; min-width: 20px; display: flex; align-items: center; justify-content: flex-end; padding: 0 8px; border-radius: 4px; box-sizing: border-box; }
+        .dist-bar.highlight { background: var(--correct); }
     </style>
 </head>
 <body>
@@ -239,12 +239,24 @@
         </div>
     </div>
 
+    <div id="statsModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-box"><div class="stat-num" id="statPlayed">0</div><div class="stat-label">Played</div></div>
+                <div class="stat-box"><div class="stat-num" id="statWinPct">0</div><div class="stat-label">Win %</div></div>
+                <div class="stat-box"><div class="stat-num" id="statStreak">0</div><div class="stat-label">Streak</div></div>
+                <div class="stat-box"><div class="stat-num" id="statMax">0</div><div class="stat-label">Max</div></div>
+            </div>
+            <div class="dist-chart" id="distChart">
+                </div>
+            <button class="close-modal-btn" id="closeStatsBtn">Close</button>
+        </div>
+    </div>
+
     <h1 id="mainTitle" aria-label="Flipping Letters">
-        fli<span class="title-spin-wrapper" aria-hidden="true">
-            <span class="title-front">d</span><span class="title-back">p</span>
-        </span><span class="title-spin-wrapper" aria-hidden="true">
-            <span class="title-front">d</span><span class="title-back">p</span>
-        </span>ing letters
+        flip<span class="title-spin-wrapper" aria-hidden="true"><span class="title-front">d</span><span class="title-back">p</span></span>ing 
+        l<span class="title-spin-wrapper" aria-hidden="true"><span class="title-front">a</span><span class="title-back">e</span></span>tters
     </h1>
     
     <p class="subtitle" id="subtitleText">Guess today's word!<br>Tap the spin button to rotate letters 180°!</p>
@@ -260,7 +272,9 @@
     <div class="controls">
         <button id="backspaceBtn" class="action-btn backspace" aria-label="Delete last letter">DEL</button>
         <button id="submitBtn" class="action-btn" aria-label="Submit guess">Submit</button>
-        <button id="shareBtn" class="action-btn share-btn" aria-label="Share your score">Share Score</button>
+        
+        <button id="statsBtn" class="action-btn stats-btn" aria-label="View Stats">Stats</button>
+        <button id="shareBtn" class="action-btn share-btn" aria-label="Share your score">Share</button>
     </div>
 
     <div id="message" role="status"></div>
@@ -280,15 +294,8 @@
                 <option value="15">Day 16</option><option value="16">Day 17</option><option value="17">Day 18</option>
                 <option value="18">Day 19</option><option value="19">Day 20</option><option value="20">Day 21</option>
             </select>
-            <select id="fontSelect" aria-label="Change Font">
-                <option value="'Tourney', sans-serif">Font: Tourney</option>
-                <option value="'WDXL Lubrifont JP N', sans-serif">Font: WDXL Lubrifont JP N</option>
-                <option value="'Monomaniac One', sans-serif">Font: Monomaniac One</option>
-                <option value="'Iceland', sans-serif">Font: Iceland</option>
-                <option value="'Genos', sans-serif">Font: Genos</option>
-                <option value="'Nunito', sans-serif">Font: Nunito</option>
-            </select>
             <button id="debugBtn" class="debug-btn">Reveal Target</button>
+            <button id="resetStatsBtn" class="debug-btn" style="color:var(--f43f5e);">Reset Stats</button>
         </div>
         <span id="debugWord"></span>
     </div>
@@ -303,12 +310,10 @@
 
     <script>
         const WORD_LENGTH = 5;
-        const MAX_GUESSES = 4;
+        const MAX_GUESSES = 5; // UPDATED: Now gives 5 tries
         const ANIMATION_DELAY_MS = 150;
         const SHAKE_DELAY_MS = 300;
 
-        // --- THE BALANCED & SHUFFLED 21-DAY LIST ---
-        // A mix of static targets, required flips, and "evil twin" distractors. No overlaps!
         const gameLevels = [
             { word: "brand", bank: [ { char: 'b', flipChar: 'q' }, { char: 'r', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'u', flipChar: 'n' }, { char: 'p', flipChar: 'd' }, { char: 'm', flipChar: 'w' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null } ] },
             { word: "clump", bank: [ { char: 'c', flipChar: null }, { char: 'l', flipChar: null }, { char: 'n', flipChar: 'u' }, { char: 'm', flipChar: 'w' }, { char: 'd', flipChar: 'p' }, { char: 'a', flipChar: 'e' }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null }, { char: 'o', flipChar: null } ] },
@@ -356,6 +361,52 @@
             }
         }
 
+        // --- STATS SYSTEM (LocalStorage) ---
+        let userStats = JSON.parse(localStorage.getItem('flippingLettersStats')) || {
+            played: 0, wins: 0, currentStreak: 0, maxStreak: 0, distribution: Array(MAX_GUESSES).fill(0), lastCompletedDay: -1
+        };
+
+        function saveStats() {
+            localStorage.setItem('flippingLettersStats', JSON.stringify(userStats));
+        }
+
+        function updateStats(won) {
+            // Prevent refreshing the page and claiming multiple wins for the same puzzle
+            if (userStats.lastCompletedDay === state.puzzleNumber) return;
+
+            userStats.played++;
+            if (won) {
+                userStats.wins++;
+                userStats.currentStreak++;
+                if (userStats.currentStreak > userStats.maxStreak) userStats.maxStreak = userStats.currentStreak;
+                userStats.distribution[state.currentRow]++;
+            } else {
+                userStats.currentStreak = 0;
+            }
+            userStats.lastCompletedDay = state.puzzleNumber;
+            saveStats();
+        }
+
+        function renderStatsModal() {
+            document.getElementById('statPlayed').innerText = userStats.played;
+            document.getElementById('statWinPct').innerText = userStats.played > 0 ? Math.round((userStats.wins / userStats.played) * 100) : 0;
+            document.getElementById('statStreak').innerText = userStats.currentStreak;
+            document.getElementById('statMax').innerText = userStats.maxStreak;
+
+            const maxDist = Math.max(...userStats.distribution, 1); // Avoid div by 0
+            const chartHtml = userStats.distribution.map((count, index) => {
+                const widthPct = Math.max((count / maxDist) * 100, 8); // Minimum 8% width so zero is visible
+                const isCurrent = state.status === "WON" && state.currentRow === index;
+                return `
+                    <div class="dist-row">
+                        <div class="dist-label">${index + 1}</div>
+                        <div class="dist-bar ${isCurrent ? 'highlight' : ''}" style="width: ${widthPct}%">${count}</div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('distChart').innerHTML = chartHtml;
+        }
+
         const state = {
             puzzleNumber: 1, targetWord: "", status: "PLAYING", currentRow: 0,
             board: Array.from({length: MAX_GUESSES}, () => []), bank: [] 
@@ -365,11 +416,11 @@
             board: document.getElementById('board'), bank: document.getElementById('bank'),
             message: document.getElementById('message'), endMessage: document.getElementById('endMessage'),
             submitBtn: document.getElementById('submitBtn'), backspaceBtn: document.getElementById('backspaceBtn'),
-            shareBtn: document.getElementById('shareBtn'), bankContainer: document.getElementById('bank-container')
+            shareBtn: document.getElementById('shareBtn'), statsBtn: document.getElementById('statsBtn'),
+            bankContainer: document.getElementById('bank-container')
         };
 
         function initGame(overrideIndex = null) {
-            // Hardcoded to boot into Day 1 on load
             const launchDate = new Date(Date.UTC(2026, 3, 24)); 
             const now = new Date();
             const currentUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
@@ -393,7 +444,7 @@
             state.bank = rawBank;
 
             els.bankContainer.style.display = 'block'; els.endMessage.style.display = 'none';
-            els.message.style.display = 'block'; els.shareBtn.style.display = 'none';
+            els.message.style.display = 'block'; els.shareBtn.style.display = 'none'; els.statsBtn.style.display = 'none';
             els.submitBtn.style.display = 'block'; els.backspaceBtn.style.display = 'block';
             els.submitBtn.innerText = "Submit"; els.submitBtn.disabled = false;
             els.message.innerText = ""; document.getElementById('debugWord').style.visibility = 'hidden';
@@ -564,9 +615,9 @@
 
             setTimeout(() => {
                 if (guessString === state.targetWord) {
-                    state.status = "WON"; handleEndGame();
+                    state.status = "WON"; handleEndGame(true);
                 } else if (state.currentRow >= MAX_GUESSES - 1) { 
-                    state.status = "LOST"; handleEndGame();
+                    state.status = "LOST"; handleEndGame(false);
                 } else {
                     state.currentRow++; unlockInput(); render(); 
                 }
@@ -579,9 +630,11 @@
             document.body.style.pointerEvents = 'auto';
         }
 
-        function handleEndGame() {
+        function handleEndGame(won) {
             document.body.style.pointerEvents = 'auto';
-            if (state.status === "WON") {
+            updateStats(won); // Save to LocalStorage
+
+            if (won) {
                 const rowNodes = document.getElementById(`row-${state.currentRow}`).children;
                 for (let i = 0; i < WORD_LENGTH; i++) {
                     setTimeout(() => { rowNodes[i].classList.add('win-dance'); }, i * 100);
@@ -593,11 +646,20 @@
                 els.message.style.display = 'none'; els.bankContainer.style.display = 'none';
                 els.submitBtn.style.display = 'none'; els.backspaceBtn.style.display = 'none';
                 
-                if (state.status === "WON") { els.endMessage.innerText = "Well done!"; } 
+                if (won) { els.endMessage.innerText = "Well done!"; } 
                 else { els.endMessage.innerText = "Unlucky!\nThe word was " + state.targetWord.toUpperCase(); }
                 
-                els.endMessage.style.display = 'block'; els.shareBtn.style.display = 'block';
-            }, state.status === "WON" ? 1200 : 1500); 
+                els.endMessage.style.display = 'block'; 
+                els.shareBtn.style.display = 'block';
+                els.statsBtn.style.display = 'block';
+                
+                // Auto-show stats shortly after game ends
+                setTimeout(() => {
+                    renderStatsModal();
+                    document.getElementById('statsModal').classList.remove('hidden');
+                }, 1500);
+
+            }, won ? 1200 : 1500); 
         }
 
         function triggerFireworks() {
@@ -656,7 +718,6 @@
 
         async function handleShare() {
             const attemptStr = state.status === "WON" ? state.currentRow + 1 : 'X';
-            // Clean Share string without duplicate title
             let shareText = `#${state.puzzleNumber} ${attemptStr}/${MAX_GUESSES}\n\n`;
             
             for (let r = 0; r <= state.currentRow; r++) { 
@@ -685,6 +746,15 @@
         els.submitBtn.addEventListener('click', handleSubmit);
         els.backspaceBtn.addEventListener('click', handleBackspace);
         els.shareBtn.addEventListener('click', handleShare);
+        
+        els.statsBtn.addEventListener('click', () => {
+            renderStatsModal();
+            document.getElementById('statsModal').classList.remove('hidden');
+        });
+
+        document.getElementById('closeStatsBtn').addEventListener('click', () => {
+            document.getElementById('statsModal').classList.add('hidden');
+        });
 
         document.getElementById('closeTutorialBtn').addEventListener('click', () => {
             document.getElementById('tutorialModal').classList.add('hidden'); 
@@ -701,6 +771,14 @@
             } else {
                 devMenu.style.display = 'flex';
                 setTimeout(() => { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }, 50);
+            }
+        });
+
+        document.getElementById('resetStatsBtn').addEventListener('click', () => {
+            if(confirm("Are you sure you want to reset all local stats?")) {
+                localStorage.removeItem('flippingLettersStats');
+                userStats = { played: 0, wins: 0, currentStreak: 0, maxStreak: 0, distribution: Array(MAX_GUESSES).fill(0), lastCompletedDay: -1 };
+                alert("Stats reset!");
             }
         });
 
@@ -721,6 +799,9 @@
         document.addEventListener("keydown", (e) => {
             if (!document.getElementById('tutorialModal').classList.contains('hidden')) {
                 if (e.key === "Enter") document.getElementById('closeTutorialBtn').click(); return;
+            }
+            if (!document.getElementById('statsModal').classList.contains('hidden')) {
+                if (e.key === "Enter") document.getElementById('closeStatsBtn').click(); return;
             }
             if (e.key === "Backspace") handleBackspace();
             if (e.key === "Enter") handleSubmit();
