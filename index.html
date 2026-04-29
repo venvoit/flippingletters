@@ -96,7 +96,6 @@
             color: var(--tile-text); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         
-        /* FIX: Forces filled tiles to be dark text, overriding mobile browsers */
         .board-tile.filled { 
             background-color: var(--tile-bg) !important; 
             color: var(--tile-text) !important;
@@ -322,30 +321,35 @@
         const ANIMATION_DELAY_MS = 150;
         const SHAKE_DELAY_MS = 300;
 
-        const gameLevels = [
-            { word: "brand", bank: [ { char: 'b', flipChar: 'q' }, { char: 'r', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'u', flipChar: 'n' }, { char: 'p', flipChar: 'd' }, { char: 'm', flipChar: 'w' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null } ] },
-            { word: "clump", bank: [ { char: 'c', flipChar: null }, { char: 'l', flipChar: null }, { char: 'n', flipChar: 'u' }, { char: 'm', flipChar: 'w' }, { char: 'd', flipChar: 'p' }, { char: 'a', flipChar: 'e' }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null }, { char: 'o', flipChar: null } ] },
-            { word: "squad", bank: [ { char: 's', flipChar: null }, { char: 'b', flipChar: 'q' }, { char: 'u', flipChar: 'n' }, { char: 'e', flipChar: 'a' }, { char: 'd', flipChar: 'p' }, { char: 'w', flipChar: 'm' }, { char: 't', flipChar: null }, { char: 'i', flipChar: null }, { char: 'o', flipChar: null }, { char: 'r', flipChar: null } ] },
-            { word: "magic", bank: [ { char: 'm', flipChar: 'w' }, { char: 'e', flipChar: 'a' }, { char: 'g', flipChar: null }, { char: 'i', flipChar: null }, { char: 'c', flipChar: null }, { char: 'u', flipChar: 'n' }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'o', flipChar: null }, { char: 'r', flipChar: null } ] },
-            { word: "prawn", bank: [ { char: 'p', flipChar: 'd' }, { char: 'r', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'm', flipChar: 'w' }, { char: 'n', flipChar: 'u' }, { char: 'q', flipChar: 'b' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null } ] },
-            { word: "blind", bank: [ { char: 'b', flipChar: 'q' }, { char: 'l', flipChar: null }, { char: 'i', flipChar: null }, { char: 'u', flipChar: 'n' }, { char: 'p', flipChar: 'd' }, { char: 'e', flipChar: 'a' }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'o', flipChar: null }, { char: 'r', flipChar: null } ] },
-            { word: "vault", bank: [ { char: 'v', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'n', flipChar: 'u' }, { char: 'l', flipChar: null }, { char: 't', flipChar: null }, { char: 'm', flipChar: 'w' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 'i', flipChar: null }, { char: 'o', flipChar: null } ] },
-            { word: "blend", bank: [ { char: 'q', flipChar: 'b' }, { char: 'l', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'u', flipChar: 'n' }, { char: 'd', flipChar: 'p' }, { char: 'm', flipChar: 'w' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null } ] },
-            { word: "quick", bank: [ { char: 'b', flipChar: 'q' }, { char: 'u', flipChar: 'n' }, { char: 'i', flipChar: null }, { char: 'c', flipChar: null }, { char: 'k', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'o', flipChar: null }, { char: 'r', flipChar: null } ] },
-            { word: "drawn", bank: [ { char: 'p', flipChar: 'd' }, { char: 'r', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'w', flipChar: 'm' }, { char: 'u', flipChar: 'n' }, { char: 'b', flipChar: 'q' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null } ] },
-            { word: "fault", bank: [ { char: 'f', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'u', flipChar: 'n' }, { char: 'l', flipChar: null }, { char: 't', flipChar: null }, { char: 'd', flipChar: 'p' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 'i', flipChar: null }, { char: 'o', flipChar: null } ] },
-            { word: "black", bank: [ { char: 'b', flipChar: 'q' }, { char: 'l', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'c', flipChar: null }, { char: 'k', flipChar: null }, { char: 'n', flipChar: 'u' }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null }, { char: 'o', flipChar: null } ] },
-            { word: "plumb", bank: [ { char: 'p', flipChar: 'd' }, { char: 'l', flipChar: null }, { char: 'n', flipChar: 'u' }, { char: 'w', flipChar: 'm' }, { char: 'b', flipChar: 'q' }, { char: 'e', flipChar: 'a' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null } ] },
-            { word: "gland", bank: [ { char: 'g', flipChar: null }, { char: 'l', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'u', flipChar: 'n' }, { char: 'd', flipChar: 'p' }, { char: 'm', flipChar: 'w' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null } ] },
-            { word: "frown", bank: [ { char: 'f', flipChar: null }, { char: 'r', flipChar: null }, { char: 'o', flipChar: null }, { char: 'm', flipChar: 'w' }, { char: 'n', flipChar: 'u' }, { char: 'p', flipChar: 'd' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null } ] },
-            { word: "chimp", bank: [ { char: 'c', flipChar: null }, { char: 'h', flipChar: null }, { char: 'i', flipChar: null }, { char: 'w', flipChar: 'm' }, { char: 'p', flipChar: 'd' }, { char: 'n', flipChar: 'u' }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'l', flipChar: null }, { char: 'o', flipChar: null } ] },
-            { word: "grand", bank: [ { char: 'g', flipChar: null }, { char: 'r', flipChar: null }, { char: 'e', flipChar: 'a' }, { char: 'n', flipChar: 'u' }, { char: 'p', flipChar: 'd' }, { char: 'm', flipChar: 'w' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null } ] },
-            { word: "fluid", bank: [ { char: 'f', flipChar: null }, { char: 'l', flipChar: null }, { char: 'n', flipChar: 'u' }, { char: 'i', flipChar: null }, { char: 'd', flipChar: 'p' }, { char: 'e', flipChar: 'a' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'o', flipChar: null } ] },
-            { word: "mucky", bank: [ { char: 'w', flipChar: 'm' }, { char: 'u', flipChar: 'n' }, { char: 'c', flipChar: null }, { char: 'k', flipChar: null }, { char: 'y', flipChar: null }, { char: 'p', flipChar: 'd' }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null }, { char: 'o', flipChar: null } ] },
-            { word: "plant", bank: [ { char: 'd', flipChar: 'p' }, { char: 'l', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'u', flipChar: 'n' }, { char: 't', flipChar: null }, { char: 'm', flipChar: 'w' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 'i', flipChar: null }, { char: 'o', flipChar: null } ] },
-            { word: "blank", bank: [ { char: 'q', flipChar: 'b' }, { char: 'l', flipChar: null }, { char: 'a', flipChar: 'e' }, { char: 'u', flipChar: 'n' }, { char: 'k', flipChar: null }, { char: 'd', flipChar: 'p' }, { char: 'c', flipChar: null }, { char: 's', flipChar: null }, { char: 't', flipChar: null }, { char: 'i', flipChar: null } ] }
+        // --- ENCRYPTED TARGET DATA (Spoilers Hidden) ---
+        // This array uses a simple ROT13 shift. Casual viewers checking the source code 
+        // will not be able to read the answers. The game decodes them instantly on load.
+        const obfuscatedLevels = [
+            "oenaq|od,e-,nr,ha,cq,zj,p-,f-,g-,v-", "pyhzc|p-,y-,ah,zj,qc,nr,f-,g-,v-,b-",
+            "fdhnq|f-,od,ha,rn,cq,jz,g-,v-,b-,e-", "zntvp|zj,rn,t-,v-,p-,ha,f-,g-,b-,e-",
+            "cenja|cq,e-,rn,zj,ah,do,p-,f-,g-,v-", "oyvaq|od,y-,v-,ha,cq,rn,f-,g-,b-,e-",
+            "inhyg|i-,nr,ah,y-,g-,zj,p-,f-,v-,b-", "oyraq|do,y-,rn,ha,qc,zj,p-,f-,g-,v-",
+            "dhvpx|od,ha,v-,p-,x-,rn,f-,g-,b-,e-", "qenja|cq,e-,nr,jz,ha,od,p-,f-,g-,v-",
+            "snhyg|s-,rn,ha,y-,g-,qc,p-,f-,v-,b-", "oynpx|od,y-,rn,p-,x-,ah,f-,g-,v-,b-",
+            "cyhzo|cq,y-,ah,jz,od,rn,p-,f-,g-,v-", "tynaq|t-,y-,rn,ha,qc,zj,p-,f-,g-,v-",
+            "sebja|s-,e-,b-,zj,ah,cq,p-,f-,g-,v-", "puvzc|p-,u-,v-,jz,cq,ah,f-,g-,y-,b-",
+            "tenaq|t-,e-,rn,ah,cq,zj,p-,f-,g-,v-", "syhvq|s-,y-,ah,v-,qc,rn,p-,f-,g-,b-",
+            "zhpxl|jz,ha,p-,x-,l-,cq,f-,g-,v-,b-", "cynag|qc,y-,nr,ha,g-,zj,p-,f-,v-,b-",
+            "oynax|do,y-,nr,ha,x-,qc,p-,f-,g-,v-"
         ];
 
+        // The decoder engine
+        function buildGameLevels() {
+            const dec = s => s.replace(/[a-z]/gi, c => String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26));
+            return obfuscatedLevels.map(enc => {
+                const decoded = dec(enc);
+                const [word, bankStr] = decoded.split('|');
+                const bank = bankStr.split(',').map(pair => ({ char: pair[0], flipChar: pair[1] === '-' ? null : pair[1] }));
+                return { word, bank };
+            });
+        }
+        
+        const gameLevels = buildGameLevels();
         const validWords = new Set(gameLevels.map(level => level.word));
 
         async function loadLocalDictionary() {
@@ -373,7 +377,6 @@
             played: 0, wins: 0, currentStreak: 0, maxStreak: 0, distribution: Array(MAX_GUESSES).fill(0), lastCompletedDay: -1
         };
 
-        // Safety map: If they played the old 4-guess version, migrate their stats to the new 5-guess array
         if (userStats.distribution.length < MAX_GUESSES) {
             const newDist = Array(MAX_GUESSES).fill(0);
             userStats.distribution.forEach((val, i) => newDist[i] = val);
@@ -420,11 +423,10 @@
             board: Array.from({length: MAX_GUESSES}, () => []), bank: [] 
         };
 
-        // Using direct getter functions prevents 'null' crashes if the HTML is incomplete
         function getEl(id) { return document.getElementById(id); }
 
         function initGame(overrideIndex = null) {
-            const launchDate = new Date(Date.UTC(2026, 3, 24)); 
+            const launchDate = new Date(Date.UTC(2026, 3, 27)); // Set launch date to today
             const now = new Date();
             const currentUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
             
@@ -446,7 +448,6 @@
             }
             state.bank = rawBank;
 
-            // Safe property setting prevents complete halting if an element is missing
             if(getEl('bank-container')) getEl('bank-container').style.display = 'block'; 
             if(getEl('endMessage')) getEl('endMessage').style.display = 'none';
             if(getEl('message')) { getEl('message').style.display = 'block'; getEl('message').innerText = ""; }
@@ -468,7 +469,7 @@
 
         function initDOM() {
             const boardEl = getEl('board');
-            if(!boardEl) return; // Prevent collapse bug
+            if(!boardEl) return; 
 
             boardEl.innerHTML = ''; 
             for (let i = 0; i < MAX_GUESSES; i++) {
