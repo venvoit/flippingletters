@@ -48,6 +48,7 @@
     
     <style>
         :root {
+            /* LIGHT MODE (Default) */
             --app-font: 'Tourney', sans-serif;
             --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             --board-bg: rgba(255, 255, 255, 0.6);
@@ -68,6 +69,7 @@
         }
 
         body.dark-theme {
+            /* DARK MODE */
             --bg-gradient: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
             --board-bg: rgba(255, 255, 255, 0.08);
             --bank-bg: rgba(0, 0, 0, 0.2);
@@ -245,6 +247,23 @@
         .banner-text { font-size: 1rem; font-family: 'Nunito', sans-serif; font-weight: 700; line-height: 1.2; flex-grow: 1; }
         .banner-cta { background: var(--accent-color); color: #0f172a; padding: 8px 16px; border-radius: 8px; font-weight: 900; font-size: 1.1rem; font-family: var(--app-font); text-transform: uppercase; box-shadow: 0 3px 0 #b45309; white-space: nowrap; }
 
+        .settings-btn {
+            position: fixed; bottom: 80px; right: 15px; background: var(--board-bg); color: var(--text-muted);
+            border: 1px solid var(--tile-border); border-radius: 50%; width: 40px; height: 40px; font-size: 1.4rem; 
+            display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100; transition: all 0.2s; touch-action: manipulation;
+        }
+        .settings-btn:hover { color: var(--text-color); transform: rotate(90deg); }
+
+        .debug-container { 
+            display: none; margin-top: 20px; padding: 15px; border: 1px dashed var(--tile-border); 
+            border-radius: 12px; text-align: center; background-color: var(--board-bg); 
+            flex-direction: column; gap: 10px; align-items: center; position: relative; z-index: 10;
+        }
+        .debug-container h3 { margin: 0; font-size: 1.2rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-family: 'Nunito', sans-serif;}
+        .debug-controls { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap;}
+        .debug-btn, input[type="date"] { background: var(--tile-bg); border: 1px solid var(--tile-border); color: var(--text-color); padding: 8px 12px; font-size: 1.2rem; border-radius: 6px; cursor: pointer; font-family: var(--app-font); outline: none; font-weight: 700; }
+        
+        /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 10000; backdrop-filter: blur(5px); }
         .modal-content { background: var(--modal-bg); padding: 40px 30px; border-radius: 20px; border: 2px solid var(--modal-border); max-width: 400px; width: 90%; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); box-sizing: border-box; }
         .modal-content h2 { margin-top: 0; color: var(--text-color); font-size: 2.5rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 800; margin-bottom: 20px;}
@@ -262,6 +281,7 @@
         .close-modal-btn:active { transform: translateY(5px); box-shadow: 0 0 0 #15803d; }
         .hidden { display: none !important; }
 
+        /* Stats UI */
         .stats-grid { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
         .stat-box { display: flex; flex-direction: column; align-items: center; }
         .stat-num { font-size: 2.5rem; font-weight: 900; color: var(--text-color); line-height: 1; }
@@ -334,6 +354,18 @@
     </div>
 
     <div id="message" role="status"></div>
+
+    <button id="settingsBtn" class="settings-btn" aria-label="Developer Settings">⚙️</button>
+
+    <div class="debug-container" id="debugContainer">
+        <h3>Developer Options</h3>
+        <div class="debug-controls">
+            <input type="date" id="datePicker" aria-label="Jump to Date">
+            <button id="debugBtn" class="debug-btn">Reveal Target</button>
+            <button id="resetStatsBtn" class="debug-btn" style="color:var(--f43f5e);">Reset Stats</button>
+        </div>
+        <span id="debugWord"></span>
+    </div>
 
     <a href="https://twowords2.page.link/play" target="_blank" rel="noopener noreferrer" id="bannerAd" aria-label="Play Two Words with Susie Dent">
         <div class="banner-content">
